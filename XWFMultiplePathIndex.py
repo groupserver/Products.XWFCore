@@ -3,6 +3,9 @@
 #
 # For details of the license, please see LICENSE.
 #
+# This file also contains code modified from original Zope sources,
+# which was covered by the Zope Public Licence Version 2.0. 
+#
 # You MUST follow the rules in README_STYLE before checking in code
 # to the head. Code which does not follow the rules will be rejected.  
 #
