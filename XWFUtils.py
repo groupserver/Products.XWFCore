@@ -57,18 +57,36 @@ def createRequestFromRequest(request, filternull=1, **kws):
         nrequest.append('%s=%s' % (key, val))
         
     return '&'.join(nrequest)
-    
+
+def convertTextToId(text):
+    import string
+    safe = string.digits + string.ascii_letters
+    s = []
+    for i in text:
+        if i in safe:
+            s.append(i)
+        else:
+            s.append('_')
+            
+    return ''.join(s)
+
 def convertTextToAscii(text):
     s = []
     for i in text:
-        if ord(i) < 128:
+        if ord(i) < 128 and ord(i) > 0:
             s.append(i)
             
     return ''.join(s)
     
+def removePathsFromFilenames(fname):
+    """ Remove the paths from filenames uploaded by (primarily) IE.
+        
+    """
+    return fname.split('\\')[-1].split('/')[-1]
+    
 def createBatch(result_set, b_start, b_size):
     b_start = int(b_start)-1; b_size = int(b_size)
-    result_size = len(result_set)    
+    result_size = len(result_set)
 
     if b_start < 0:
         b_start = 0
