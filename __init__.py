@@ -25,3 +25,5 @@ xwfutils_security.declarePublic('convertObjectsToXml')
 xwfutils_security.declarePublic('createRequestFromRequest')
 xwfutils_security.declarePublic('convertTextToAscii')
 xwfutils_security.declarePublic('createBatch')
+xwfutils_security.declarePublic('generate_user_id')
+

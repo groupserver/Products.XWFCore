@@ -120,6 +120,8 @@ def createBatch(result_set, b_start, b_size):
 
 def generate_user_id(user_id='', first_name='', last_name='', email=''):
     if first_name and last_name:
+        yield (first_name+last_name).lower()
+        yield (last_name+first_name).lower()
         yield (first_name+last_name[0]).lower()
         yield (last_name+first_name[0]).lower()
         yield (first_name+'.'+last_name).lower()
