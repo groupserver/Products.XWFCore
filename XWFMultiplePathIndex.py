@@ -25,7 +25,7 @@ class MultiplePathIndex(PathIndex):
                                                                             
             if safe_callable(f):
                 try:
-                    path = f()
+                    paths = f()
                 except AttributeError:
                     return 0
             else:
