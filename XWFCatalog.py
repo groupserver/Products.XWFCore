@@ -28,7 +28,7 @@ class XWFCatalog(ZCatalog):
         ZCatalog.__init__(self, self.getId())
         self.addIndex('allowedRolesAndUsers', 'KeywordIndex')
         
-    def catalog_object(self, object, uid, idxs=[]):         
+    def catalog_object(self, object, uid=None, idxs=[]):         
         # Wraps the object with workflow and accessibility
         # information just before cataloging.
         vars = {}
