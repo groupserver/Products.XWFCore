@@ -11,10 +11,11 @@ from IXWFMetadataProvider import IXWFMetadataProvider
 class XWFMetadataProvider:
     __implements__ = (IXWFMetadataProvider,)
     
-    _metadata_prefix_ns = {} # maps ns_prefix: ns
-    _metadata_ns_prefix = {} # maps ns: ns_prefix
-    _metadata_index = {} # maps metadata: index_type
-    _metadata_prefix_metadata = {} # maps ns_prefix: metadata
+    def __init__(self):
+        self._metadata_prefix_ns = {} # maps ns_prefix: ns
+        self._metadata_ns_prefix = {} # maps ns: ns_prefix
+        self._metadata_index = {} # maps metadata: index_type
+        self._metadata_prefix_metadata = {} # maps ns_prefix: metadata
 
     def get_metadataNSPrefix(self, ns):
         """ Return the prefix for namespace requested.
@@ -25,14 +26,7 @@ class XWFMetadataProvider:
         """
         return self._metadata_ns_prefix.get(ns, None)
         
-    def get_metadataNSPrefixMap(self):
-        """ Return a dictionary of all known metadata namespace -> prefix
-        mappings.
-        
-        """
-        return self._metadata_ns_prefix
-        
-    def get_metadataPrefixNSMap(self):
+    def get_metadataFullPrefixNSMap(self):
         """ Return a dictionary of all known metadata prefix -> namespace
         mappings.
         
@@ -45,10 +39,10 @@ class XWFMetadataProvider:
             This is functionally equivalent to set_metadataNS('someuri', '').
             
         """
+        self._p_changed = 1
+        
         self._metadata_prefix_ns[''] = ns
         self._metadata_ns_prefix[ns] = ''
-        
-        self._p_changed = 1
 
         return 1
 
@@ -62,10 +56,10 @@ class XWFMetadataProvider:
         """ Set a metadata namespace.
         
         """
+        self._p_changed = 1
+        
         self._metadata_prefix_ns[ns_prefix] = ns
         self._metadata_ns_prefix[ns] = ns_prefix
-
-        self._p_changed = 1
         
         return 1
 
@@ -73,6 +67,8 @@ class XWFMetadataProvider:
         """ Remove a metadata namespace.
         
         """
+        self._p_changed = 1
+        
         if self._metadata_ns_prefix.has_key(ns):
             ns_prefix = self._metadata_ns_prefix[ns]
             del(self._metadata_ns_prefix[ns])
@@ -93,6 +89,7 @@ class XWFMetadataProvider:
         
         """
         import copy
+        self._p_changed = 1
         
         old_ns_prefix = self.get_metadataNSPrefix(ns)
         self.set_metadataNS(ns, ns_prefix)
@@ -103,12 +100,14 @@ class XWFMetadataProvider:
                 index_type = self.get_metadataIndex(m_id, old_ns_prefix)
                 self.remove_metadataIndex(m_id, old_ns_prefix)
                 self.set_metadataIndex(m_id, ns_prefix, index_type)
-                
+        
         return 1
                 
-    def _genCanonicalMetadataId(self, metadata_id, ns_prefix=''):
+    def genCanonicalMetadataId(self, metadata_id, ns_prefix=''):
+        # we use a '+' rather than the traditional ':' for the namespace
+        # delimiter, because ':' has special meaning in zope forms.
         if ns_prefix:
-            canonical_metadata = '%s:%s' % (ns_prefix, metadata_id)
+            canonical_metadata = '%s+%s' % (ns_prefix, metadata_id)
         else:
             canonical_metadata = metadata_id
             
@@ -118,7 +117,9 @@ class XWFMetadataProvider:
         """ Define a new kind of metadata.
         
         """
-        canonical_metadata = self._genCanonicalMetadataId(metadata_id, ns_prefix)
+        self._p_changed = 1
+        
+        canonical_metadata = self.genCanonicalMetadataId(metadata_id, ns_prefix)
             
         self._metadata_index[canonical_metadata] = index_type
         if (self._metadata_prefix_metadata.has_key(ns_prefix) and
@@ -126,8 +127,6 @@ class XWFMetadataProvider:
             self._metadata_prefix_metadata[ns_prefix].append(metadata_id)
         else:
             self._metadata_prefix_metadata[ns_prefix] = [metadata_id]
-            
-        self._p_changed = 1
         
         return 1
     
@@ -139,7 +138,7 @@ class XWFMetadataProvider:
         metadata = {}
         
         for metadata_id in self._metadata_prefix_metadata.get(ns_prefix, []):
-            cm_id = self._genCanonicalMetadataId(metadata_id, ns_prefix)
+            cm_id = self.genCanonicalMetadataId(metadata_id, ns_prefix)
             if self._metadata_index.has_key(cm_id):
                 metadata[metadata_id] = self._metadata_index.get(cm_id)
         
@@ -157,7 +156,7 @@ class XWFMetadataProvider:
         prefix.
         
         """
-        canonical_metadata = self._genCanonicalMetadataId(metadata_id, ns_prefix)
+        canonical_metadata = self.genCanonicalMetadataId(metadata_id, ns_prefix)
         
         return self._metadata_index.get(canonical_metadata, None)
 
@@ -171,7 +170,7 @@ class XWFMetadataProvider:
         """ Undefine a kind of metadata.
         
         """
-        canonical_metadata = self._genCanonicalMetadataId(metadata_id, ns_prefix)
+        canonical_metadata = self.genCanonicalMetadataId(metadata_id, ns_prefix)
         
         # remove the metadata from the metadata -> index mapping
         try:
@@ -189,6 +188,6 @@ class XWFMetadataProvider:
             return 0
             
         self._p_changed = 1
-
+        
         return 1
         
