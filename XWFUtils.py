@@ -80,7 +80,8 @@ def convertTextToId(text):
 def convertTextToAscii(text):
     s = []
     for i in text:
-        if ord(i) < 128 and ord(i) > 0:
+        if ((ord(i) < 128 and ord(i) > 31) or
+            (ord(i) in (9,10,13))):
             s.append(i)
             
     return ''.join(s)
