@@ -30,3 +30,18 @@ def convertCatalogResultsToXml(result_set):
     xmlstream = map(lambda x: str(x), xmlstream)
 
     return '\n\n'.join(xmlstream)
+
+def convertObjectsToXml(result_set):
+    """ Convert a set of objects to XML using the get_xml method of those
+        objects.
+       
+        result_set must be an object capable of being iterated over.
+    """
+    xmlstream = []
+    
+    for result in result_set:
+        xmlstream.append(result.get_xml())
+    
+    xmlstream = map(lambda x: str(x), xmlstream)
+
+    return '\n\n'.join(xmlstream)

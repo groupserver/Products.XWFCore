@@ -10,3 +10,4 @@ from AccessControl import ModuleSecurityInfo
 
 xwfutils_security = ModuleSecurityInfo('Products.XWFCore.XWFUtils')
 xwfutils_security.declarePublic('convertCatalogResultsToXml')
+xwfutils_security.declarePublic('convertObjectsToXml')
