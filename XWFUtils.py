@@ -120,28 +120,28 @@ def createBatch(result_set, b_start, b_size):
 
 def generate_user_id(user_id='', first_name='', last_name='', email=''):
     if first_name and last_name:
-        yield first_name+last_name[0]
-        yield last_name+first_name[0]
-        yield first_name+'.'+last_name
-        yield last_name+'.'+first_name
+        yield (first_name+last_name[0]).lower()
+        yield (last_name+first_name[0]).lower()
+        yield (first_name+'.'+last_name).lower()
+        yield (last_name+'.'+first_name).lower()
     if email:
         try:
-            yield email.split('@')[0]
+            yield (email.split('@')[0]).lower()
         except:
             pass
     if user_id:
         i = 1
         while 1:
-            yield user_id+'%s' % i
+            yield (user_id+'%s' % i).lower()
             i += 1
     if first_name and last_name:
         i = 1
         while 1:
-            yield first_name+'.'+last_name+'%s' % i
+            yield (first_name+'.'+last_name+'%s' % i).lower()
             i += 1
     if email:
         try:
-            uid = email.split('@')[0]
+            uid = (email.split('@')[0]).lower()
             i = 1
             while 1:
                 yield uid+'%s' % i
