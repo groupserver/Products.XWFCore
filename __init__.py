@@ -11,3 +11,6 @@ from AccessControl import ModuleSecurityInfo
 xwfutils_security = ModuleSecurityInfo('Products.XWFCore.XWFUtils')
 xwfutils_security.declarePublic('convertCatalogResultsToXml')
 xwfutils_security.declarePublic('convertObjectsToXml')
+xwfutils_security.declarePublic('createRequestFromRequest')
+xwfutils_security.declarePublic('convertTextToAscii')
+xwfutils_security.declarePublic('createBatch')
