@@ -79,7 +79,7 @@ class IXWFMetadataProvider(Interface):
         
         """
 
-    def get_metadataIndexesMap():
+    def get_metadataIndexMap():
         """ Returns a dictionary of all metadata along with their index types.
         
         """

@@ -161,7 +161,7 @@ class XWFMetadataProvider:
         
         return self._metadata_index.get(canonical_metadata, None)
 
-    def get_metadataIndexesMap(self):
+    def get_metadataIndexMap(self):
         """ Returns a dictionary of all metadata along with their index types.
         
         """
