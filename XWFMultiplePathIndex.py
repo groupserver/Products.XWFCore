@@ -11,6 +11,7 @@
 #
 from Products.PluginIndexes.PathIndex.PathIndex import *
 from types import StringType
+from zLOG import LOG, ERROR
 
 class MultiplePathIndex(PathIndex):
     def index_object(self, documentId, obj ,threshold=100):
@@ -46,7 +47,7 @@ class MultiplePathIndex(PathIndex):
             elif not type(path) == StringType:
                 raise TypeError('path value must be string or tuple of strings')
                                                                                 
-            comps = self.splitPath(path, obj)
+            comps = filter(None, path.split('/'))
                                                                             
             for i in range(len(comps)):
                 self.insertEntry(comps[i], documentId, i)
