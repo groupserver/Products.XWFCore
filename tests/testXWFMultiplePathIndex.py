@@ -79,28 +79,34 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
     def _searchCatalog(self, index_name, query, limit=None):
         query_dict = {}
         query_dict['query'] = query
-        if limit: query_dict['limit'] = limit
+        if limit:
+            query_dict['limit'] = limit
+        
         return self._catalog.searchResults({index_name: query_dict})
 
-    def test_1_createMultiplePathIndexProperty(self):
+    def _numResults(self, index_name, query, limit=None):
+        return len(self._searchCatalog(index_name, query, limit))
+
+    def test_01_createMultiplePathIndexProperty(self):
         self._setupCatalog('multiple_paths_property')
         self._setupCatalogableObject('foo')
-        self.assertEqual(len(self._searchCatalog('mutiple_paths_property', 'one/two')), 1)
+        self.assertEqual(self._numResults('mutiple_paths_property', 'one/two'), 1)
                 
-    def test_2_createMultiplePathIndexMethod(self):
+    def test_02_createMultiplePathIndexMethod(self):
         self._setupCatalog('multiple_paths_method')
         self._setupCatalogableObject('foo')
-        self.assertEqual(len(self._searchCatalog('mutiple_paths_method', 'one/two')), 1)
+        self.assertEqual(self._numResults('mutiple_paths_method', 'one/two'), 1)
     
-    def test_3_indexLotsOfObjects(self):
+    def test_03_indexLotsOfObjects(self):
         self._setupCatalog('multiple_paths_method')
         for i in xrange(1000):
             self._setupCatalogableObject('foo_%s' % i)
         
-        self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(), 1000)
+        self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
+                         1000)
         
-    def test_4_unindexLotsOfObjects(self):
-        self.test_3_indexLotsOfObjects()
+    def test_04_unindexLotsOfObjects(self):
+        self.test_03_indexLotsOfObjects()
         total = 0
         for object in self._searchCatalog('multiple_paths_method', 'one/two'):
             total += 1
@@ -108,11 +114,14 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
         
         self.assertEqual(total, 1000)
 
+        self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
+                         0)
+
 if __name__ == '__main__':
     print framework(descriptions=1, verbosity=1)
 else:
     import unittest
     def test_suite():
         suite = unittest.TestSuite()
-        suite.addTest(unittest.makeSuite(TestSomeProduct))
+        suite.addTest(unittest.makeSuite(TestXWFMultiplePathIndex))
         return suite
