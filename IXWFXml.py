@@ -8,7 +8,7 @@
 #
 from Interface import Interface
 
-class IXMLProducer(Interface):
+class IXmlProducer(Interface):
     def get_xml():
         """ Returns a stream of XML representative of the object.
         
