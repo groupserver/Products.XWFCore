@@ -149,3 +149,18 @@ def generate_user_id(user_id='', first_name='', last_name='', email=''):
         except:
             pass
             
+readable_passchars = ['%', '+', '2', '3', '4', '5',
+                      '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+                      'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S',
+                      'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'b', 'c', 'd', 'e',
+                      'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'o', 'p', 'q',
+                      'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+            
+def generate_password(length=8):
+    import random
+    password = ''
+    for i in xrange(length):
+        password += random.choice(readable_passchars)
+        
+    return password
+    
