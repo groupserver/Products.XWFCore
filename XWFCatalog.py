@@ -21,7 +21,6 @@ from Products.CMFCore.CatalogTool import IndexableObjectWrapper
 from AccessControl import getSecurityManager
 from Products.ZCatalog.ZCatalog import ZCatalog
 from Acquisition import aq_base
-
 from types import StringType
 
 class XWFCatalog(ZCatalog):
@@ -50,6 +49,8 @@ class XWFCatalog(ZCatalog):
         return result
 
     # searchResults has inherited security assertions.
+    # searchResults and unrestrictedSearchResults are 'borrowed' 
+    # from CMFCore
     def searchResults(self, REQUEST=None, **kw):
         """ Calls ZCatalog.searchResults with extra arguments that
             limit the results to what the user is allowed to see.
@@ -60,6 +61,22 @@ class XWFCatalog(ZCatalog):
         # we replace, rather than append the 'allowedRolesAndUsers' index,
         # anything else would be a really big security loophole
         kw[ 'allowedRolesAndUsers' ] = self._listAllowedRolesAndUsers( user )
-        return apply(ZCatalog.searchResults, (self, REQUEST), kw)
+        return ZCatalog.searchResults(self, REQUEST, **kw)
  
     __call__ = searchResults
+
+    security.declarePrivate('unrestrictedSearchResults')
+    def unrestrictedSearchResults(self, REQUEST=None, **kw):
+        """Calls ZCatalog.searchResults directly without restrictions.
+
+        This method returns every also not yet effective and already expired
+        objects regardless of the roles the caller has.
+
+        CAUTION: Care must be taken not to open security holes by
+        exposing the results of this method to non authorized callers!
+
+        If you're in doubt if you should use this method or
+        'searchResults' use the latter.
+        """
+        return ZCatalog.searchResults(self, REQUEST, **kw)
+
