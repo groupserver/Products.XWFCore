@@ -203,13 +203,16 @@ def generate_accesscode(seed_string):
     
     return access_code
 
-def assign_ownership(object, owner, recursive=0):
+def assign_ownership(object, owner, recursive=0, acl_user_path='/acl_users'):
     """ Change the ownership to a user with Manager priviledges.
         
     """
-    root = object.getPhysicalRoot()
-    acl_users = root.acl_users
+    acl_users = object.unrestrictedTraverse(acl_user_path)
     user = acl_users.getUser(owner)
+    
+    # for some zope-magic reason, the user returned by acl_users
+    # isn't context wrapped
+    user = user.__of__(acl_users)
     
     if not user.has_permission('Take ownership', object):
         return 0
@@ -222,8 +225,8 @@ def markupEmail(text):
     import re, cgi
     
     text = cgi.escape(text)
-    text = re.sub('(?i)(http://|https://)(.*?)(\W\s|\W$|$|\s)',
-           '<email:link url="\g<1>\g<2>">\g<2></email:link>\g<3>',
+    text = re.sub('(?i)(http://|https://)(.+?)(\&.+?\;|\W\s|\W$|$|\s)',
+           '<email:link url="\g<1>\g<2>">\g<1>\g<2></email:link>\g<3>',
            text)
     text = text.replace('@', ' ( at ) ')
     
