@@ -13,4 +13,18 @@ class IXmlProducer(Interface):
         """ Returns a stream of XML representative of the object.
         
         """
+        
+    def get_xmlMetadataElements(default_ns=''):
+        """ Returns a stream of XML representative of the metadata of the
+        object.
+        
+        For example, if the object contains metadata attributes 'dc:Title',
+        'dc:Description' and 'id', and the default_ns passed is 'foo',
+        the metadata stream would be:
+        
+        <dc:Title>Some title</dc:Title>
+        <dc:Description>Some description</dc:Description>
+        <foo:id>ObjectID</foo:id>
+        
+        """
     
