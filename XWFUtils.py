@@ -164,3 +164,28 @@ def generate_password(length=8):
         
     return password
     
+def convert_int2b(num, base, alphabet, converted=[]):
+    mod = num % 62; rem = num / 62
+    converted.append(alphabet[mod])
+    if rem:
+        return convert_int2b(rem, 62, alphabet, converted)
+    converted.reverse()
+
+    return ''.join(converted)
+
+def convert_int2b62(num):
+    import sys, string
+    alphabet = string.printable[:62]
+
+    return convert_int2b(num, 62, alphabet, [])
+
+def generate_accesscode():
+    """ Generate a random string for (among other things) validating users.
+    
+    """
+    import md5, DateTime
+    
+    num = long(md5.new(email+str(DateTime.DateTime())).hexdigest(), 16)
+    access_code = convert_int2b62(num)
+    
+    return access_code
