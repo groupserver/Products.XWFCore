@@ -58,12 +58,13 @@ def minimallyEqualXML(one, two):
     
     return sf(onedom.toxml()) == sf(twodom.toxml())
 
+from Products.XWFCore.XWFCatalog import XWFCatalog
 from Products.XWFCore.XWFMultiplePathIndex import MultiplePathIndex
 class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
     def afterSetUp(self):
-        self.folder.manage_addProduct['ZCatalog'].manage_addZCatalog('Catalog',
-                                                                                                                   'Catalog')
-        self._catalog = self.folder.Catalog._catalog        
+        self.folder._setObject('Catalog', XWFCatalog())
+        self._catalog = self.folder.Catalog._catalog
+        self._Catalog = self.folder.Catalog     
 
     def beforeTearDown(self):
         pass
@@ -82,7 +83,7 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
         if limit:
             query_dict['limit'] = limit
         
-        return self._catalog.searchResults({index_name: query_dict})
+        return self._Catalog.searchResults({index_name: query_dict})
 
     def _numResults(self, index_name, query, limit=None):
         return len(self._searchCatalog(index_name, query, limit))
@@ -104,7 +105,7 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
         
         self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
                          1000)
-        
+                         
     def test_04_unindexLotsOfObjects(self):
         self.test_03_indexLotsOfObjects()
         total = 0
