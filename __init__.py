@@ -18,6 +18,7 @@
 # to the trunk. Code which does not follow the rules will be rejected.
 #
 from AccessControl import ModuleSecurityInfo
+from AccessControl import allow_class
 
 xwfutils_security = ModuleSecurityInfo('Products.XWFCore.XWFUtils')
 xwfutils_security.declarePublic('convertCatalogResultsToXml')
@@ -27,3 +28,8 @@ xwfutils_security.declarePublic('convertTextToAscii')
 xwfutils_security.declarePublic('createBatch')
 xwfutils_security.declarePublic('generate_user_id')
 
+csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
+csv_security.declarePublic('CSVFile')
+
+from Products.XWFCore.CSV import CSVFile
+allow_class(CSVFile)

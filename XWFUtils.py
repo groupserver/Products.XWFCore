@@ -118,35 +118,46 @@ def createBatch(result_set, b_start, b_size):
     
     return (b_start, b_end, b_size, result_size, result_set) 
 
+def normalize_user_id(user_id):
+    import string
+    valid_chars = string.ascii_letters+string.digits+'-'+'_'
+    id_chars = []
+    for char in user_id:
+        if char in valid_chars:
+            id_chars.append(char)
+    
+    return ''.join(id_chars)
+
 def generate_user_id(user_id='', first_name='', last_name='', email=''):
+    nuid = normalize_user_id
     if first_name and last_name:
-        yield (first_name+last_name).lower()
-        yield (last_name+first_name).lower()
-        yield (first_name+last_name[0]).lower()
-        yield (last_name+first_name[0]).lower()
-        yield (first_name+'.'+last_name).lower()
-        yield (last_name+'.'+first_name).lower()
+        yield nuid((first_name+last_name).lower())
+        yield nuid((last_name+first_name).lower())
+        yield nuid((first_name+last_name[0]).lower())
+        yield nuid((last_name+first_name[0]).lower())
+        yield nuid((first_name+'.'+last_name).lower())
+        yield nuid((last_name+'.'+first_name).lower())
     if email:
         try:
-            yield (email.split('@')[0]).lower()
+            yield nuid((email.split('@')[0]).lower())
         except:
             pass
     if user_id:
         i = 1
         while 1:
-            yield (user_id+'%s' % i).lower()
+            yield nuid((user_id+'%s' % i).lower())
             i += 1
     if first_name and last_name:
         i = 1
         while 1:
-            yield (first_name+'.'+last_name+'%s' % i).lower()
+            yield nuid((first_name+'.'+last_name+'%s' % i).lower())
             i += 1
     if email:
         try:
             uid = (email.split('@')[0]).lower()
             i = 1
             while 1:
-                yield uid+'%s' % i
+                yield nuid(uid+'%s' % i)
                 i += 1 
         except:
             pass
