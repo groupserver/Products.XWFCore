@@ -6,3 +6,7 @@
 # You MUST follow the rules in README_STYLE before checking in code
 # to the head. Code which does not follow the rules will be rejected.  
 #
+from AccessControl import ModuleSecurityInfo
+
+xwfutils_security = ModuleSecurityInfo('Products.XWFCore.XWFUtils')
+xwfutils_security.declarePublic('convertCatalogResultsToXml')
