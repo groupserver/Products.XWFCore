@@ -33,12 +33,13 @@ class MultiplePathIndex(PathIndex):
                     return 0
             else:
                 paths = f
-                                                                  
+            if not paths:
+                paths = []
             if type(paths) not in (ListType, TupleType):
                 raise TypeError('paths value must be tuple of strings, or tuple of tuples of strings')
         else:
             return 0
-    
+        
         for path in paths:
             if type(path) in (ListType, TupleType):
                 path = '/'+ '/'.join(path[1:])
