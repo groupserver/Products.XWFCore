@@ -36,7 +36,7 @@ class XWFCatalog(ZCatalog):
         ZCatalog.catalog_object(self, w, uid, idxs)
 
     def _listAllowedRolesAndUsers( self, user ):
-        result = list( user.getRoles() )
+        result = list( user.getRolesInContext(self) )
         result.append( 'Anonymous' )
         result.append( 'user:%s' % user.getId() )
         return result
