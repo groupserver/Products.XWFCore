@@ -139,3 +139,13 @@ def generate_user_id(user_id='', first_name='', last_name='', email=''):
         while 1:
             yield first_name+'.'+last_name+'%s' % i
             i += 1
+    if email:
+        try:
+            uid = email.split('@')[0]
+            i = 1
+            while 1:
+                yield uid+'%s' % i
+                i += 1 
+        except:
+            pass
+            
