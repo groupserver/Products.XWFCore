@@ -32,8 +32,9 @@ class MultiplePathIndex(PathIndex):
              expects to receive a _tuple_ of single paths, or a tuple of tuples of path parts.
              
         """
-        f = getattr(obj, self.id, None)
-        if f:
+        if hasattr(obj, self.id):
+            f = getattr(obj, self.id)
+                                                                            
             if safe_callable(f):
                 try:
                     paths = f()
@@ -55,11 +56,7 @@ class MultiplePathIndex(PathIndex):
                 raise TypeError('path value must be string or tuple of strings')
                                                                                 
             comps = filter(None, path.split('/'))
-            
-            if not self._unindex.has_key(documentId):
-                self._migrate_length()
-                self._length.change(1)
-            
+                                                                            
             for i in range(len(comps)):
                 self.insertEntry(comps[i], documentId, i)
             
@@ -108,6 +105,4 @@ class MultiplePathIndex(PathIndex):
                         'Attempt to unindex document'
                         'with id %s failed' % documentId)
   
-        self._migrate_length()
-        self._length.change(-1)
         del self._unindex[documentId]
