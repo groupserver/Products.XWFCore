@@ -1,10 +1,21 @@
-# Copyright IOPEN Technologies Ltd., 2003
-# richard@iopen.net
+# Copyright (C) 2003,2004 IOPEN Technologies Ltd.
 #
-# For details of the license, please see LICENSE.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-# You MUST follow the rules in README_STYLE before checking in code
-# to the head. Code which does not follow the rules will be rejected.  
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+# You MUST follow the rules in STYLE before checking in code
+# to the trunk. Code which does not follow the rules will be rejected.
 #
 import os, sys
 if __name__ == '__main__':
@@ -61,6 +72,7 @@ def minimallyEqualXML(one, two):
 from Products.XWFCore.XWFCatalog import XWFCatalog
 from Products.XWFCore.XWFMultiplePathIndex import MultiplePathIndex
 class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
+    objectCount = 1000
     def afterSetUp(self):
         self.folder._setObject('Catalog', XWFCatalog())
         self._catalog = self.folder.Catalog._catalog
@@ -100,11 +112,10 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
     
     def test_03_indexLotsOfObjects(self):
         self._setupCatalog('multiple_paths_method')
-        for i in xrange(1000):
+        for i in xrange(self.objectCount):
             self._setupCatalogableObject('foo_%s' % i)
-        
         self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
-                         1000)
+                         self.objectCount)
                          
     def test_04_unindexLotsOfObjects(self):
         self.test_03_indexLotsOfObjects()
@@ -113,11 +124,26 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
             total += 1
             object.getObject().unindex_object()
         
-        self.assertEqual(total, 1000)
+        self.assertEqual(total, self.objectCount)
 
         self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
                          0)
 
+    def test_04_unindexLotsOfObjects(self):
+        self.test_03_indexLotsOfObjects()
+        total = 0
+        for object in self._searchCatalog('multiple_paths_method', 'one/two'):
+            total += 1
+            object.getObject().unindex_object()
+            if total == self.objectCount/2:
+                break
+        
+        self.assertEqual(total, self.objectCount/2)
+
+        self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
+                         self.objectCount-(self.objectCount/2))
+
+                         
 if __name__ == '__main__':
     print framework(descriptions=1, verbosity=1)
 else:

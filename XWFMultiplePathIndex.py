@@ -1,13 +1,21 @@
-# Copyright IOPEN Technologies Ltd., 2003
-# richard@iopen.net
+# Copyright (C) 2003,2004 IOPEN Technologies Ltd.
 #
-# For details of the license, please see LICENSE.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-# This file also contains code modified from original Zope sources,
-# which was covered by the Zope Public Licence Version 2.0. 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-# You MUST follow the rules in README_STYLE before checking in code
-# to the head. Code which does not follow the rules will be rejected.  
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+# You MUST follow the rules in STYLE before checking in code
+# to the trunk. Code which does not follow the rules will be rejected.
 #
 from Products.PluginIndexes.PathIndex.PathIndex import *
 from types import StringType
@@ -24,9 +32,8 @@ class MultiplePathIndex(PathIndex):
              expects to receive a _tuple_ of single paths, or a tuple of tuples of path parts.
              
         """
-        if hasattr(obj, self.id):
-            f = getattr(obj, self.id)
-                                                                            
+        f = getattr(obj, self.id, None)
+        if f:
             if safe_callable(f):
                 try:
                     paths = f()
@@ -48,7 +55,11 @@ class MultiplePathIndex(PathIndex):
                 raise TypeError('path value must be string or tuple of strings')
                                                                                 
             comps = filter(None, path.split('/'))
-                                                                            
+            
+            if not self._unindex.has_key(documentId):
+                self._migrate_length()
+                self._length.change(1)
+            
             for i in range(len(comps)):
                 self.insertEntry(comps[i], documentId, i)
             
@@ -97,4 +108,6 @@ class MultiplePathIndex(PathIndex):
                         'Attempt to unindex document'
                         'with id %s failed' % documentId)
   
+        self._migrate_length()
+        self._length.change(-1)
         del self._unindex[documentId]
