@@ -27,6 +27,8 @@ xwfutils_security.declarePublic('createRequestFromRequest')
 xwfutils_security.declarePublic('convertTextToAscii')
 xwfutils_security.declarePublic('createBatch')
 xwfutils_security.declarePublic('generate_user_id')
+xwfutils_security.declarePublic('assign_ownership')
+xwfutils_security.declarePublic('markupEmail')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')

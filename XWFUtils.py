@@ -202,3 +202,29 @@ def generate_accesscode(seed_string):
     access_code = convert_int2b62(num)
     
     return access_code
+
+def assign_ownership(object, owner, recursive=0):
+    """ Change the ownership to a user with Manager priviledges.
+        
+    """
+    root = object.getPhysicalRoot()
+    acl_users = root.acl_users
+    user = acl_users.getUser(owner)
+    
+    if not user.has_permission('Take ownership', object):
+        return 0
+    
+    object.changeOwnership(user, recursive)
+    
+    return 1
+
+def markupEmail(text):
+    import re, cgi
+    
+    text = cgi.escape(text)
+    text = re.sub('(?i)(http://|https://)(.*?)(\W\s|\W$|$|\s)',
+           '<email:link url="\g<1>\g<2>">\g<2></email:link>\g<3>',
+           text)
+    text = text.replace('@', ' ( at ) ')
+    
+    return text
