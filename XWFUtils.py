@@ -45,3 +45,49 @@ def convertObjectsToXml(result_set):
     xmlstream = map(lambda x: str(x), xmlstream)
 
     return '\n\n'.join(xmlstream)
+    
+def createRequestFromRequest(request, filternull=1, **kws):
+    # work on a copy of the form so we don't screw up the request for other
+    # things
+    form = request.form.copy()
+    form.update(kws)
+    nrequest = []
+    for key,val in form.items():
+        if filternull and not val: continue
+        nrequest.append('%s=%s' % (key, val))
+        
+    return '&'.join(nrequest)
+    
+def convertTextToAscii(text):
+    s = []
+    for i in text:
+        if ord(i) < 128:
+            s.append(i)
+            
+    return ''.join(s)
+    
+def createBatch(result_set, b_start, b_size):
+    b_start = int(b_start)-1; b_size = int(b_size)
+    result_size = len(result_set)    
+
+    if b_start < 0:
+        b_start = 0
+
+    b_end = b_start + b_size
+
+    if result_size <= b_end or b_end == -1:
+        b_end = result_size
+        
+    if result_size <= b_start or b_start > b_end:
+        b_start = b_end
+
+    result_set = result_set[b_start:b_end]
+    
+    # it's easier to do this calculation here than in the presentation layer
+    rset_size = len(result_set)
+    if rset_size < b_size:
+        b_end = b_start + rset_size
+    else:
+        b_end = b_start + b_size
+    
+    return (b_start, b_end, b_size, result_size, result_set) 
