@@ -19,6 +19,7 @@
 #
 from Products.CMFCore.CatalogTool import IndexableObjectWrapper
 from AccessControl import getSecurityManager
+from AccessControl import ClassSecurityInfo
 from Products.ZCatalog.ZCatalog import ZCatalog
 from Acquisition import aq_base
 from types import StringType
@@ -28,6 +29,8 @@ class XWFCatalog(ZCatalog):
     to remove objects the user doesn't have permission to view.
     
     """
+    security = ClassSecurityInfo()
+    
     id = 'xwf catalog'
     meta_type = 'XWF Catalog'
     
