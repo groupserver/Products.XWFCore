@@ -179,13 +179,13 @@ def convert_int2b62(num):
 
     return convert_int2b(num, 62, alphabet, [])
 
-def generate_accesscode():
+def generate_accesscode(seed_string):
     """ Generate a random string for (among other things) validating users.
     
     """
     import md5, DateTime
     
-    num = long(md5.new(email+str(DateTime.DateTime())).hexdigest(), 16)
+    num = long(md5.new(seed_string+str(DateTime.DateTime())).hexdigest(), 16)
     access_code = convert_int2b62(num)
     
     return access_code
