@@ -11,8 +11,13 @@ if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
 from Testing import ZopeTestCase
+from OFS.SimpleItem import SimpleItem
+from Products.ZCatalog.CatalogPathAwareness import CatalogAware
 
 ZopeTestCase.installProduct('XWFCore')
+ZopeTestCase.installProduct('ZCatalog')
+
+from Products.XWFCore import XWFMultiplePathIndex
 
 testXML = """<?xml version="1.0" ?>
 <root>
@@ -29,6 +34,15 @@ class FakePOSTRequest:
     """
     import StringIO
     stdin = StringIO.StringIO(testXML)
+
+class TestClass(SimpleItem, CatalogAware):
+    def __init__(self, id):
+        self.id = id
+    
+    multiple_paths_property =  ('one/two/three', 'one/four/five', 'six/seven/eight')
+
+    def multiple_paths_method(self):
+        return ('one/two/three', 'one/four/five', 'six/seven/eight')
 
 def minimallyEqualXML(one, two):
     """ Strip all the whitespace out of two pieces of XML code, having first converted
@@ -47,14 +61,53 @@ def minimallyEqualXML(one, two):
 from Products.XWFCore.XWFMultiplePathIndex import MultiplePathIndex
 class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
     def afterSetUp(self):
-        pass        
+        self.folder.manage_addProduct['ZCatalog'].manage_addZCatalog('Catalog',
+                                                                                                                   'Catalog')
+        self._catalog = self.folder.Catalog._catalog        
 
     def beforeTearDown(self):
         pass
         
-    def test_1_createMultiplePathIndex(self):
-        pass
+    def _setupCatalog(self, index_name):
+        self._catalog.addIndex(index_name, 
+                                 XWFMultiplePathIndex.MultiplePathIndex(index_name))
+                                 
+    def _setupCatalogableObject(self, object_name):
+        self.folder._setOb(object_name, TestClass(object_name))
+        getattr(self.folder, object_name).index_object()
         
+    def _searchCatalog(self, index_name, query, limit=None):
+        query_dict = {}
+        query_dict['query'] = query
+        if limit: query_dict['limit'] = limit
+        return self._catalog.searchResults({index_name: query_dict})
+
+    def test_1_createMultiplePathIndexProperty(self):
+        self._setupCatalog('multiple_paths_property')
+        self._setupCatalogableObject('foo')
+        self.assertEqual(len(self._searchCatalog('mutiple_paths_property', 'one/two')), 1)
+                
+    def test_2_createMultiplePathIndexMethod(self):
+        self._setupCatalog('multiple_paths_method')
+        self._setupCatalogableObject('foo')
+        self.assertEqual(len(self._searchCatalog('mutiple_paths_method', 'one/two')), 1)
+    
+    def test_3_indexLotsOfObjects(self):
+        self._setupCatalog('multiple_paths_method')
+        for i in xrange(1000):
+            self._setupCatalogableObject('foo_%s' % i)
+        
+        self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(), 1000)
+        
+    def test_4_unindexLotsOfObjects(self):
+        self.test_3_indexLotsOfObjects()
+        total = 0
+        for object in self._searchCatalog('multiple_paths_method', 'one/two'):
+            total += 1
+            object.getObject().unindex_object()
+        
+        self.assertEqual(total, 1000)
+
 if __name__ == '__main__':
     print framework(descriptions=1, verbosity=1)
 else:
