@@ -175,7 +175,7 @@ class XWFMetadataProvider:
         """ Returns a dictionary of all metadata along with their index types.
         
         """
-        return self._metadata_index
+        return getattr(self, '_metadata_index', {})
         
     def remove_metadataIndex(self, metadata_id, ns_prefix=''):
         """ Undefine a kind of metadata.
