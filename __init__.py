@@ -29,9 +29,15 @@ xwfutils_security.declarePublic('createBatch')
 xwfutils_security.declarePublic('generate_user_id')
 xwfutils_security.declarePublic('assign_ownership')
 xwfutils_security.declarePublic('markupEmail')
+xwfutils_security.declarePublic('getToolByName')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
 
 from Products.XWFCore.CSV import CSVFile
 allow_class(CSVFile)
+
+def initialize(context):
+    # Import lazily, and defer initialization to the module
+    import XWFCatalog
+    XWFCatalog.initialize(context)

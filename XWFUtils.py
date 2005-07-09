@@ -21,6 +21,7 @@ __doc__ = """
 A collection of generally useful utility functions.
 
 """
+from Acquisition import aq_get
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
@@ -231,3 +232,26 @@ def markupEmail(text):
     text = text.replace('@', ' ( at ) ')
     
     return text
+
+# getToolByName is borrowed directly from CMFCore, since we want to achieve
+# _exactly_ the same goal
+_marker = []
+def getToolByName(obj, name, default=_marker):
+
+    """ Get the tool, 'toolname', by acquiring it.
+
+    o Application code should use this method, rather than simply
+      acquiring the tool by name, to ease forward migration (e.g.,
+      to Zope3).
+    """
+    try:
+        tool = aq_get(obj, name, default, 1)
+    except AttributeError:
+        if default is _marker:
+            raise
+        return default
+    else:
+        if tool is _marker:
+            raise AttributeError, name
+        return tool
+
