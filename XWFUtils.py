@@ -22,6 +22,7 @@ A collection of generally useful utility functions.
 
 """
 from Acquisition import aq_get
+from AccessControl import getSecurityManager
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
@@ -255,3 +256,26 @@ def getToolByName(obj, name, default=_marker):
             raise AttributeError, name
         return tool
 
+def getOption(obj, name, default=None):
+    """ Get the an option, from the user object, the division config,
+        or the site config.
+        
+    """
+    security = getSecurityManager()
+    user = security.getUser()
+    try:
+        option = user.getProperty(name, None)
+    except:
+        option = None
+                
+    if not option:    
+        divConfig = getToolByName(obj, 'DivisionConfiguration', None)
+        if divConfig:
+            option = divConfig.getProperty(name, None)
+    
+    if not option:
+        siteConfig = getToolByName(obj, 'GlobalConfiguration', None)
+        if siteConfig:
+            option = siteConfig.getProperty(name, None)
+    
+    return option
