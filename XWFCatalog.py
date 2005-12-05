@@ -70,7 +70,7 @@ class XWFCatalog(ZCatalog):
     
     meta_type = 'XWF Catalog'
     
-    def __init__(self, id):
+    def __init__(self, id='Catalog'):
         ZCatalog.__init__(self, self.getId())
         self.addIndex('allowedRolesAndUsers', 'KeywordIndex')
         
