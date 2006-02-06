@@ -218,7 +218,7 @@ class XWFCatalog(ZCatalog):
                 item.addIndex(index_id, index_type)
             
         # store the common metadata for sorting
-        for md in ('id', 'content_type', 'meta_type', 'title', 'topic, 'tags',
+        for md in ('id', 'content_type', 'meta_type', 'title', 'topic', 'tags',
                    'size', 'modification_time', 'group_ids', 'dc_creator',
                    'indexable_summary'):
             if md not in schema:
