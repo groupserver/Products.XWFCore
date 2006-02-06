@@ -41,3 +41,8 @@ def initialize(context):
     # Import lazily, and defer initialization to the module
     import XWFCatalog
     XWFCatalog.initialize(context)
+
+validator_security = ModuleSecurityInfo('Products.XWFCore.validators')
+validator_security.declarePublic('validate_email')
+validator_security.declarePublic('ValidationError')
+
