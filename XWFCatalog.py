@@ -25,6 +25,9 @@ from Products.ZCatalog.ZCatalog import ZCatalog
 from Acquisition import aq_base
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
+import logging
+logger = logging.getLogger()
+
 class Record:
     pass
 
@@ -72,6 +75,7 @@ class XWFCatalog(ZCatalog):
     
     def __init__(self, id='Catalog'):
         ZCatalog.__init__(self, self.getId())
+        
         self.addIndex('allowedRolesAndUsers', 'KeywordIndex')
         
     def __url(self, ob):
@@ -166,7 +170,10 @@ class XWFCatalog(ZCatalog):
         self.catalog_object(object, url, idxs, update_metadata)
 
     def manage_afterAdd(self, item, container):
-        ZCatalog.manage_afterAdd(self, item, container)
+        # if manage_afterAdd is called but item isn't our own meta_type,
+        # don't do anything!
+        if item.meta_type != self.meta_type:
+            return False
         
         if not hasattr(item.aq_explicit, 'Lexicon'):
             wordsplitter = Record()
@@ -201,13 +208,18 @@ class XWFCatalog(ZCatalog):
         for index_id, index_type in (('id', 'FieldIndex'),
                                      ('meta_type', 'FieldIndex'),
                                      ('modification_time', 'DateIndex'),
-                                     ('resource_locator', 'FieldIndex')):
+                                     ('dc_creator', 'FieldIndex'),
+                                     ('tags', 'KeywordIndex'),
+                                     ('title', 'FieldIndex'),
+                                     ('topic', 'FieldIndex'),
+                                     ('group_ids', 'KeywordIndex'),
+                                     ('content_type', 'FieldIndex')):
             if index_id not in indexes:
                 item.addIndex(index_id, index_type)
             
         # store the common metadata for sorting
-        for md in ('id', 'meta_type', 'title', 'size',
-                   'modification_time', 'dc_creator',
+        for md in ('id', 'content_type', 'meta_type', 'title', 'topic, 'tags',
+                   'size', 'modification_time', 'group_ids', 'dc_creator',
                    'indexable_summary'):
             if md not in schema:
                 item.addColumn(md)
