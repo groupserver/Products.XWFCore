@@ -108,3 +108,22 @@ class XWFCatalogAware(CatalogAware, Role.RoleManager):
         # the descendants.
         catalog.reindexObject(self, idxs=['allowedRolesAndUsers'],
                               update_metadata=0)
+
+    def index_object(self):
+        """ A common method to allow Findables to index themselves.
+            
+            This is different than that of the super class in that it
+            only indexes _just_ the object, without acquisition.
+        """
+        if hasattr(self, self.default_catalog):
+            # we take a reference to acl_users, attach it to the object,
+            # and remove it afterwards so that security can still be indexed.
+            # Hack? oh yeah!
+            acl_users = self.acl_users
+            ob = getattr(self, 'aq_explicit', self)
+            ob.acl_users = acl_users
+            getattr(self,
+                    self.default_catalog).catalog_object(ob,
+                                                         self.getPath())
+            del(ob.acl_users)
+
