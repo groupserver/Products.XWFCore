@@ -74,10 +74,13 @@ class XWFCatalog(ZCatalog):
     meta_type = 'XWF Catalog'
     
     def __init__(self, id='Catalog'):
+        self.__name__ = id
+        self.id = id
+
         ZCatalog.__init__(self, self.getId())
         
         self.addIndex('allowedRolesAndUsers', 'KeywordIndex')
-        
+
     def __url(self, ob):
         return '/'.join(ob.getPhysicalPath())
 
