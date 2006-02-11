@@ -97,6 +97,12 @@ class XWFCatalogAware(CatalogAware, Role.RoleManager):
         path = '/'.join(self.getPhysicalPath())
         for brain in catalog.searchResults(path=path):
             ob = brain.getObject()
+            # we take a reference to acl_users, attach it to the object,
+            # and remove it afterwards so that security can still be indexed.
+            # Hack? oh yeah!
+            acl_users = ob.acl_users
+            ob = getattr(ob, 'aq_explicit', ob)
+            ob.acl_users = acl_users
             if ob is None:
                 # Ignore old references to deleted objects.
                 continue
@@ -104,11 +110,20 @@ class XWFCatalogAware(CatalogAware, Role.RoleManager):
             catalog.reindexObject(ob, idxs=['allowedRolesAndUsers'],
                                   update_metadata=0)
             if s is None: ob._p_deactivate()
+            del(ob.acl_users)
         # Reindex the object itself, as the PathIndex only gave us
         # the descendants.
-        catalog.reindexObject(self, idxs=['allowedRolesAndUsers'],
-                              update_metadata=0)
 
+        # we take a reference to acl_users, attach it to the object,
+        # and remove it afterwards so that security can still be indexed.
+        # Hack? oh yeah!
+        acl_users = self.acl_users
+        ob = getattr(self, 'aq_explicit', self)
+        ob.acl_users = acl_users
+        catalog.reindexObject(ob, idxs=['allowedRolesAndUsers'],
+                              update_metadata=0)
+        del(ob.acl_users)
+        
     def index_object(self):
         """ A common method to allow Findables to index themselves.
             
@@ -120,10 +135,19 @@ class XWFCatalogAware(CatalogAware, Role.RoleManager):
             # and remove it afterwards so that security can still be indexed.
             # Hack? oh yeah!
             acl_users = self.acl_users
+            try:
+                rl = self.get_resourceLocator()
+            except:
+                rl = None
             ob = getattr(self, 'aq_explicit', self)
             ob.acl_users = acl_users
+            if rl:
+                ob.resource_locator = rl
             getattr(self,
                     self.default_catalog).catalog_object(ob,
                                                          self.getPath())
             del(ob.acl_users)
-
+            try:
+                del(ob.resource_locator)
+            except:
+                pass
