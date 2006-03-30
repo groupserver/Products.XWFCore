@@ -70,7 +70,12 @@ class XWFCatalog(ZCatalog):
     
     """
     security = ClassSecurityInfo()
-    
+
+    # almost the same as ZCatalog, except that we've removed the Advanced
+    # tab because people keep doing silly things with it!
+    manage_options = filter(lambda x: x['label'] != 'Advanced',
+                            ZCatalog.manage_options)
+
     meta_type = 'XWF Catalog'
     
     def __init__(self, id='Catalog'):
