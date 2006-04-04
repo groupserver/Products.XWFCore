@@ -227,7 +227,7 @@ def markupEmail(text):
     import re, cgi
     
     text = cgi.escape(text)
-    text = re.sub('(?i)(http://|https://)(.+?)(\&lt;|\&gt;|\"|\'|$|\s)',
+    text = re.sub('(?i)(http://|https://)(.+?)(\&lt;|\&gt;|\)|\]|\}|\"|\'|$|\s)',
            '<email:link url="\g<1>\g<2>">\g<1>\g<2></email:link>\g<3>',
            text)
     text = text.replace('@', ' ( at ) ')
