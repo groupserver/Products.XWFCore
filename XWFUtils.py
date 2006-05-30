@@ -23,6 +23,8 @@ A collection of generally useful utility functions.
 """
 from Acquisition import aq_get
 from AccessControl import getSecurityManager
+from App.config import getConfiguration
+import re
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
@@ -87,7 +89,42 @@ def convertTextToAscii(text):
             s.append(i)
             
     return ''.join(s)
+
+def try_encoding(s, possible_encoding, encoding):
+    success = False
+    for try_encoding in (possible_encoding, 'utf-8', 'iso-8859-1', 'iso-8859-15'):
+            try:
+                s = s.decode(try_encoding)
+                print encoding
+                s.encode(encoding)
+                success = True
+                break
+            except (UnicodeEncodeError, UnicodeDecodeError, LookupError):
+                pass
     
+    if success:
+        return s
+    
+    raise UnicodeDecodeError
+
+def convertTextUsingContentType(text, ct, encoding='UTF-8'):
+    """ Given some text, and the content-type field of an email, 
+        try and re-encode it as the given encoding.
+
+    """
+    if ct:
+        encoding_match = re.search('charset=[\'\"]?(.*?)[\'\"].*?;', ct)
+        poss_encoding = encoding_match and encoding_match.groups()[0] or 'ascii'    
+    else:
+        poss_encoding = 'ascii'
+
+    try:
+        text = try_encoding(text, poss_encoding, encoding)
+    except UnicodeDecodeError:
+        text = convertTextToAscii(text)
+
+    return text
+
 def removePathsFromFilenames(fname):
     """ Remove the paths from filenames uploaded by (primarily) IE.
         
