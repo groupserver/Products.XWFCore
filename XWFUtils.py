@@ -95,7 +95,6 @@ def try_encoding(s, possible_encoding, encoding):
     for try_encoding in (possible_encoding, 'utf-8', 'iso-8859-1', 'iso-8859-15'):
             try:
                 s = s.decode(try_encoding)
-                print encoding
                 s.encode(encoding)
                 success = True
                 break
@@ -113,7 +112,7 @@ def convertTextUsingContentType(text, ct, encoding='UTF-8'):
 
     """
     if ct:
-        encoding_match = re.search('charset=[\'\"]?(.*?)[\'\"].*?;', ct)
+        encoding_match = re.search('charset=[\'\"]?(.*?)[\'\"]?;', ct)
         poss_encoding = encoding_match and encoding_match.groups()[0] or 'ascii'    
     else:
         poss_encoding = 'ascii'
