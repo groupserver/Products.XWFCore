@@ -85,7 +85,7 @@ def convertTextToAscii(text):
     s = []
     for i in text:
         if ((ord(i) < 128 and ord(i) > 31) or
-            (ord(i) in (0,9,10,13))):
+            (ord(i) in (9,10,13))):
             s.append(i)
             
     return ''.join(s)
@@ -122,8 +122,8 @@ def convertTextUsingContentType(text, ct, encoding='UTF-8'):
     except UnicodeDecodeError:
         text = convertTextToAscii(text)
     
-    # strip nulls, nulls are bad
-    text = text.replace('\x00', '')
+    # strip most control characters, XML no like :)
+    text = re.sub('[\x00-\x08\x0B\x0C\x0E-\x1F]', '', text)
 
     return text
 
