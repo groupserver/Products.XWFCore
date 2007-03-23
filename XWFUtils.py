@@ -338,4 +338,21 @@ def getNotificationTemplate(obj, n_type, n_id):
         return None
     
     return template
+
+def get_user( context, user_id ):
+    acl_users = getToolByName( context, 'acl_users', None )
+    user = None
+    if acl_users:
+        user = acl_users.getUser( user_id )
     
+    return user
+
+def get_user_realnames( user_object=None, user_id='' ):
+    """ If the user is real, get their preferredName, otherwise
+        return some other string.
+    
+    """
+    if user_object:
+        return '%s' % (user_object.getProperty('preferredName'))
+
+    return '%s (account removed)' % user_id
