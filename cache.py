@@ -53,7 +53,7 @@ class LRUCache:
     def __init__( self ):
         self.cache = {}
         self.cache_keys = []
-        self.set_cache_size( 100 ) # default to 100
+        self.set_cache_size( 128 ) # default to 128
         
     def set_cache_size(self, size):
         self.cache_size = size
