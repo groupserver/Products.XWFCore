@@ -63,7 +63,7 @@ class LRUCache:
             for item in self.cache_keys[self.cache_size:]:
                 del(self.cache[key])
                 self.cache_keys = self.cache_keys[:self.cache_size]
-        print len(self.cache_keys)
+                
         return True
     
     def add(self, key, object):
