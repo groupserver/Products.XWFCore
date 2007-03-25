@@ -3,8 +3,11 @@ from zope.interface.interface import Interface
 import ThreadLock
 
 class ICache(Interface):
-    def set_cache_size(size):
-        """ Set the maximum size of the cache, in number of items.
+    def set_max_objects(max):
+        """ Set the maximum number of objects that the cache may contain.
+        
+        This may not be implemented by some classes, since not all caches
+        may want to implement expiry based on this parameter.
         
         """
         
@@ -13,7 +16,7 @@ class ICache(Interface):
         
         """
         
-    def has_key(self, key):
+    def has_key(key):
         """ Check to see if an object is in the cache.
         
         """
@@ -24,13 +27,16 @@ class ICache(Interface):
         """
 
 class SimpleCache:
+    """ Implement ICache with no expiry.
+    
+    """
     implements(ICache)
     __thread_lock = ThreadLock.allocate_lock()
-    def __init__( self ):
+    def __init__(self):
         self.cache = {}
         
-    def set_cache_size(self, size):
-        raise UnimplementedError
+    def set_max_objects(self, max):
+        raise NotImplementedError
         
     def add(self, key, object):
         try:
@@ -48,14 +54,17 @@ class SimpleCache:
         return self.cache.get(key, None)
 
 class LRUCache:
+    """ Implements a ICache based on a Least Recently Used mechanism.
+    
+    """
     implements(ICache)
     __thread_lock = ThreadLock.allocate_lock()
-    def __init__( self ):
+    def __init__(self):
         self.cache = {}
         self.cache_keys = []
-        self.set_cache_size( 128 ) # default to 128
+        self.set_max_objects(128) # set default
         
-    def set_cache_size(self, size):
+    def set_max_objects(self, size):
         self.cache_size = size
         
     def __do_add(self, key, object):
@@ -68,7 +77,7 @@ class LRUCache:
         self.cache_keys.insert(0, key)
         
         if len(self.cache_keys) > self.cache_size:
-            for item in self.cache_keys[self.cache_size:]:
+            for key in self.cache_keys[self.cache_size:]:
                 del(self.cache[key])
                 self.cache_keys = self.cache_keys[:self.cache_size]
                 
