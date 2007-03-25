@@ -13,6 +13,11 @@ class ICache(Interface):
         
         """
         
+    def has_key(self, key):
+        """ Check to see if an object is in the cache.
+        
+        """
+        
     def get(key):
         """ Get an object from the cache by key.
         
@@ -36,6 +41,9 @@ class SimpleCache:
         
         return True
     
+    def has_key(self, key):
+        return self.cache.has_key(key)
+        
     def get(self, key):
         return self.cache.get(key, None)
 
@@ -73,5 +81,8 @@ class LRUCache:
         finally:
             self.__thread_lock.release()
     
+    def has_key(self, key):
+        return self.cache.has_key(key)
+        
     def get(self, key):
         return self.cache.get(key, None)
