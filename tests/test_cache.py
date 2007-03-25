@@ -50,6 +50,12 @@ def test_cache():
       >>> simple_cache.get(str(11))
       11
       
+      >>> simple_cache.has_key(str(5))
+      True
+      
+      >>> simple_cache.has_key(str(12))
+      False
+      
     The first object in the cache should still be there:
     
       >>> simple_cache.get(str(0)) == 0
@@ -78,6 +84,9 @@ def test_cache():
     
       >>> lru_cache.get(str(0)) == None
       True
+    
+      >>> lru_cache.has_key(str(0))
+      False
     
     The second object in the cache should still be there:
       

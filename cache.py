@@ -1,3 +1,8 @@
+#
+# This code has test cases in tests/test_cache.py.
+# Modifications without a supporting test case will be rejected.
+#
+
 from zope.interface.declarations import implements
 from zope.interface.interface import Interface
 import ThreadLock
