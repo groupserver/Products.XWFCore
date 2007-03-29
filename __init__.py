@@ -31,6 +31,7 @@ xwfutils_security.declarePublic('assign_ownership')
 xwfutils_security.declarePublic('markupEmail')
 xwfutils_security.declarePublic('getToolByName')
 xwfutils_security.declarePublic('convertTextUsingContentType')
+xwfutils_security.declarePublic('change_timezone')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')

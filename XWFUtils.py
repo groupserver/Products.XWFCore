@@ -26,6 +26,8 @@ from AccessControl import getSecurityManager
 from App.config import getConfiguration
 import re
 
+import pytz
+
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
         get_xml method of those results.
@@ -356,3 +358,7 @@ def get_user_realnames( user_object=None, user_id='' ):
         return '%s' % (user_object.getProperty('preferredName'))
 
     return '%s (account removed)' % user_id
+
+def change_timezone(dt, timezone):
+    tz = pytz.timezone(timezone)
+    return dt.normalize(dt.astimezone(tz))
