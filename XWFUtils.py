@@ -361,4 +361,4 @@ def get_user_realnames( user_object=None, user_id='' ):
 
 def change_timezone(dt, timezone):
     tz = pytz.timezone(timezone)
-    return pytz.normalize(dt.astimezone(tz))
+    return tz.normalize(dt.astimezone(tz))
