@@ -27,6 +27,8 @@ from App.config import getConfiguration
 import re
 
 import pytz
+import DateTime
+import datetime
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
@@ -360,5 +362,11 @@ def get_user_realnames( user_object=None, user_id='' ):
     return '%s (account removed)' % user_id
 
 def change_timezone(dt, timezone):
+    if isinstance(dt, DateTime):
+        dt = dt.toZone('UTC')        
+        dt = datetime.datetime(dt._year, dt._month, dt._day, dt._hour,
+                               dt._minute, int(dt._nearsec),
+                               int((dt._second-dt._nearsec) * 1000000),
+                               tzinfo=pytz.utc)        
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
