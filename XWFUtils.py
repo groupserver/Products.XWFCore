@@ -370,3 +370,12 @@ def change_timezone(dt, timezone):
                                tzinfo=pytz.utc)        
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
+
+def munge_date(context, dt, format=None):
+    timezone = getOption(context, 'timezone', 'UTC')
+    format = format or getOption(context, 'date_format', '%Y-%m-%d %H:%M %Z')
+    
+    dt = change_timezone(dt, timezone)
+    
+    return dt.strftime(format)
+
