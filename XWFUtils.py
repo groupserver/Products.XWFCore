@@ -371,11 +371,38 @@ def change_timezone(dt, timezone):
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
 
+def date_format_by_age(dt, timezone):
+    # set a date format according to it's distance from the present
+    utcnow = datetime.datetime.utcnow()
+    utctoday = datetime.datetime(utcnow.year, utcnow.month, utcnow.day,
+                                 tzinfo=pytz.timezone(timezone))
+    age = dt-utctoday    
+
+    # if it's after midnight in the current timezone, format it
+    # without the date 
+    if age.days >= 0:
+        format = '%H:%M %Z'
+    # if it is less than a 11 months ago (to avoid confusion
+    # over the same month over two years), format it without the year
+    elif age.days > -334:
+        format = '%m-%d %H:%M %Z'
+    # otherwise format it with the year
+    else:
+        format = '%Y-%m-%d %H:%M %Z'
+
+    return format
+
 def munge_date(context, dt, format=None):
     timezone = getOption(context, 'timezone', 'UTC')
-    format = format or getOption(context, 'date_format', '%Y-%m-%d %H:%M %Z')
-    
     dt = change_timezone(dt, timezone)
-    
+
+    # if we don't have the format try and get the format from the options
+    if not format:
+        format = getOption('date_format', None)
+
+    # otherwise set it according to the age of the timestamp
+    if not format:
+        format = date_format_by_age(dt, timezone)    
+
     return dt.strftime(format)
 
