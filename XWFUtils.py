@@ -380,15 +380,17 @@ def date_format_by_age(dt, timezone):
 
     # if it's after midnight in the current timezone, format it
     # without the date 
-    if age.days >= 0:
+    if age.days >= 0 and age.days < 1:
         format = '%H:%M %Z'
     # if it is less than a 11 months ago (to avoid confusion
     # over the same month over two years), format it without the year
-    elif age.days > -334:
-        format = '%m-%d %H:%M %Z'
-    # otherwise format it with the year
+    elif age.days < 0 and age.days > -334:
+        format = '%b %d %H:%M %Z'
+    # otherwise format it with the year. This includes dates such as tomorrow
+    # and next week, since otherwise it will not be clear that they are
+    # in the future
     else:
-        format = '%Y-%m-%d %H:%M %Z'
+        format = '%Y %b %d %H:%M %Z'
 
     return format
 
