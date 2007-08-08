@@ -408,3 +408,5 @@ def munge_date(context, dt, format=None):
 
     return dt.strftime(format)
 
+def all_timezones():
+    return pytz.all_timezones
