@@ -412,5 +412,5 @@ def all_timezones():
     return pytz.all_timezones
 
 def curr_time():
-    return datetime.datetime.utcnow()
+    return datetime.datetime.now(pytz.utc)
 
