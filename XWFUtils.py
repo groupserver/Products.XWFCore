@@ -410,3 +410,7 @@ def munge_date(context, dt, format=None):
 
 def all_timezones():
     return pytz.all_timezones
+
+def curr_time():
+    return datetime.datetime.now()
+
