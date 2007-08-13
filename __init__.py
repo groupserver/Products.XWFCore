@@ -33,6 +33,7 @@ xwfutils_security.declarePublic('getToolByName')
 xwfutils_security.declarePublic('convertTextUsingContentType')
 xwfutils_security.declarePublic('change_timezone')
 xwfutils_security.declarePublic('munge_date')
+xwfutils_security.declarePublic('curr_time')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
