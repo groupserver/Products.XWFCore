@@ -362,12 +362,17 @@ def get_user_realnames( user_object=None, user_id='' ):
     return '%s (account removed)' % user_id
 
 def change_timezone(dt, timezone):
-    if isinstance(dt, DateTime.DateTime):
+    # if we are a float, make the (rather dubious) assumption that we're
+    # looking at a UTC timestamp
+    if isinstance(dt, float) or isinstance(dt, int):
+        dt = datetime.datetime.fromtimestamp(dt, pytz.utc)
+    # check to make sure we're not a Zope DateTime object
+    elif isinstance(dt, DateTime.DateTime):
         dt = dt.toZone('UTC')        
         dt = datetime.datetime(dt._year, dt._month, dt._day, dt._hour,
                                dt._minute, int(dt._nearsec),
                                int((dt._second-dt._nearsec) * 1000000),
-                               tzinfo=pytz.utc)        
+                               tzinfo=pytz.utc)
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
 
