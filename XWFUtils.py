@@ -395,7 +395,7 @@ def date_format_by_age(dt):
     
     # set a date format according to it's distance from the present
     utcnow = datetime.datetime.now(pytz.UTC)
-    now = tz.normalize(utcnow.astimezone(tzinfo))
+    now = utcnow.astimezone(tzinfo)
     
     today = datetime.datetime(now.year, now.month, now.day,
                               tzinfo=tzinfo)
