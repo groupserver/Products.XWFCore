@@ -1,4 +1,4 @@
-# Copyright (C) 2003,2004 IOPEN Technologies Ltd.
+  # Copyright (C) 2003,2004 IOPEN Technologies Ltd.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@ import re
 import pytz
 import DateTime
 import datetime
+from zope.app.datetimeutils import parseDatetimetz
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
@@ -373,6 +374,11 @@ def change_timezone(dt, timezone):
                                dt._minute, int(dt._nearsec),
                                int((dt._second-dt._nearsec) * 1000000),
                                tzinfo=pytz.utc)
+    elif isinstance(dt, str):
+        # if we have the format Sat, 10 Mar 2007 22:47:20 +1300 (NZDT)
+        # strip the (NZDT) bit before parsing, otherwise we break the parser
+        dt = re.sub(' \(.*?\)','', dt)
+        dt = parseDatetimetz(dt)
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
 
