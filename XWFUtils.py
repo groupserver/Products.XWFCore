@@ -391,14 +391,14 @@ def date_format_by_age(dt):
     # find out the timezone of our datetime object -- we used to pass this
     # in, but this way we guarantee that our datetime isn't a tz naive instance
     # and that we never do an incorrect comparison
-    timezone = dt.tzname()
+    tzinfo = dt.tzinfo
     
     # set a date format according to it's distance from the present
     utcnow = datetime.datetime.now(pytz.UTC)
-    now = change_timezone(utcnow, timezone)
+    now = tz.normalize(utcnow.astimezone(tzinfo))
     
     today = datetime.datetime(now.year, now.month, now.day,
-                              tzinfo=pytz.timezone(timezone))
+                              tzinfo=tzinfo)
     age = dt-today    
 
     # if it's after midnight in the current timezone, format it
