@@ -387,10 +387,15 @@ def change_timezone(dt, timezone):
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
 
-def date_format_by_age(dt, timezone):
+def date_format_by_age(dt):
+    # find out the timezone of our datetime object -- we used to pass this
+    # in, but this way we guarantee that our datetime isn't a tz naive instance
+    # and that we never do an incorrect comparison
+    timezone = dt.tzname()
+    
     # set a date format according to it's distance from the present
     utcnow = datetime.datetime.now(pytz.UTC)
-    now = change_timezone(dt, timezone)
+    now = change_timezone(utcnow, timezone)
     
     today = datetime.datetime(now.year, now.month, now.day,
                               tzinfo=pytz.timezone(timezone))
@@ -422,7 +427,7 @@ def munge_date(context, dt, format=None):
 
     # otherwise set it according to the age of the timestamp
     if not format:
-        format = date_format_by_age(dt, timezone)    
+        format = date_format_by_age(dt)    
 
     return dt.strftime(format)
 
