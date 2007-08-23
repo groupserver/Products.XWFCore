@@ -374,11 +374,16 @@ def change_timezone(dt, timezone):
                                dt._minute, int(dt._nearsec),
                                int((dt._second-dt._nearsec) * 1000000),
                                tzinfo=pytz.utc)
-    elif isinstance(dt, str):
+    elif isinstance(dt, str) or isinstance(dt, unicode):
         # if we have the format Sat, 10 Mar 2007 22:47:20 +1300 (NZDT)
         # strip the (NZDT) bit before parsing, otherwise we break the parser
         dt = re.sub(' \(.*?\)','', dt)
         dt = parseDatetimetz(dt)
+    
+    assert isinstance(dt, datetime.datetime), \
+           ("dt is not a datetime instance, if a datetime instance was not "
+            "passed in as dt, it has not been converted correctly")
+
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
 
