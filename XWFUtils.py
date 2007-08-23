@@ -389,10 +389,12 @@ def change_timezone(dt, timezone):
 
 def date_format_by_age(dt, timezone):
     # set a date format according to it's distance from the present
-    utcnow = datetime.datetime.utcnow()
-    utctoday = datetime.datetime(utcnow.year, utcnow.month, utcnow.day,
-                                 tzinfo=pytz.timezone(timezone))
-    age = dt-utctoday    
+    utcnow = datetime.datetime.now(pytz.UTC)
+    now = change_timezone(dt, timezone)
+    
+    today = datetime.datetime(now.year, now.month, now.day,
+                              tzinfo=pytz.timezone(timezone))
+    age = dt-today    
 
     # if it's after midnight in the current timezone, format it
     # without the date 
