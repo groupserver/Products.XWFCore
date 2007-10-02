@@ -29,7 +29,11 @@ import re
 import pytz
 import DateTime
 import datetime
-from zope.app.datetimeutils import parseDatetimetz
+try:
+   # prior to zope 3.3
+   from zope.datetime import parseDatetimetz
+except ImportError:
+   from zope.app.datetimeutils import parseDatetimetz
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
