@@ -70,8 +70,6 @@ class SimpleCache:
         
     def get(self, key):
         return self.cache.get(key, None)
-import logging
-logger = logging.getLogger()
 
 class SimpleCacheWithExpiry:
     """ Implement ICache with expiry.
@@ -109,7 +107,6 @@ class SimpleCacheWithExpiry:
         cache_object = self.cache.get(key, None)
         retval = None
         if cache_object and datetime.datetime.now() < cache_object[0]:
-            logging.info('cache expires in %s' % (cache_object[0]-datetime.datetime.now()))
             retval = cache_object[1]
         elif cache_object:
             del(self.cache[key])
