@@ -467,7 +467,7 @@ def get_group_by_siteId_and_groupId(context, siteId, groupId):
     """
     assert groupId
     
-    site = get_site_by_id(siteId)
+    site = get_site_by_id(context, siteId)
     
     groupsFolder = getattr(site, 'groups')
     assert groupsFolder, 'The site %s has no groups' % siteId
