@@ -1,4 +1,4 @@
-  # Copyright (C) 2003,2004 IOPEN Technologies Ltd.
+# Copyright (C) 2003,2004 IOPEN Technologies Ltd.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -440,4 +440,48 @@ def all_timezones():
 
 def curr_time():
     return datetime.datetime.now(pytz.utc)
+
+def get_site_by_id(context, siteId):
+    assert siteId
+    
+    site_root = context.site_root()
+    folders = ('Folder', 'Folder (Ordered)')
+    sites = [s for s in site_root.Content.objectValues(folders) 
+      if (s and s.getProperty('is_division', False) and s.getId() == siteId)]
+    if sites:
+        assert len(sites) == 1, 'Content folder is in a weird state'
+        retval = sites[0]
+    else:
+        retval = None
+    
+    assert ((retval == None) or (retval.getId() == siteId))
+    return retval
+
+def get_group_by_siteId_and_groupId(context, siteId, groupId):
+    """Get Web-Group by ID
+    
+    Returns the Web-instance, rather than the mailing-list instance or the
+    user-group instance, of a group. Yes, "group" is ambiguous.
+    
+    Sorry about the long function name. Miss Java?
+    """
+    assert groupId
+    
+    site = get_site_by_id(siteId)
+    
+    groupsFolder = getattr(site, 'groups')
+    assert groupsFolder, 'The site %s has no groups' % siteId
+
+    folders = ('Folder', 'Folder (Ordered)')
+    groups = [g for g in groupsFolder.objectValues(folders)
+        if (g and g.getProperty('is_group', False) and g.getId() == groupId)]
+    if groups:
+        assert len(groups) == 1, \
+          'Groups folder of %s is in a weird state' % siteId
+        retval = groups[0]
+    else:
+        retval = None
+    
+    assert ((retval == None) or (retval.getId() == groupId))
+    return retval
 

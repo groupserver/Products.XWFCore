@@ -36,6 +36,8 @@ xwfutils_security.declarePublic('all_timezones')
 xwfutils_security.declarePublic('munge_date')
 xwfutils_security.declarePublic('curr_time')
 xwfutils_security.declarePublic('getOption')
+xwfutils_security.declarePublic('get_site_by_id')
+xwfutils_security.declarePublic('get_group_by_siteId_and_groupId')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
