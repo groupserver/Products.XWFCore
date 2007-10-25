@@ -38,6 +38,7 @@ xwfutils_security.declarePublic('curr_time')
 xwfutils_security.declarePublic('getOption')
 xwfutils_security.declarePublic('get_site_by_id')
 xwfutils_security.declarePublic('get_group_by_siteId_and_groupId')
+xwfutils_security.declarePublic('get_support_email')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
