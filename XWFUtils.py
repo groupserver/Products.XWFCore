@@ -492,7 +492,7 @@ def get_support_email(context, siteId):
     assert site
 
     support_email = getOption(context, 'supportEmail')
-    canonical = getOption(context, 'canonicalHost')
+    retval = support_email
 
     if support_email == 'support@onlinegroups.net':
         supportGroupId = '%s_support' % siteId
@@ -508,13 +508,11 @@ def get_support_email(context, siteId):
                 'Groups folder of %s is in a weird state' % siteId
             group = groups[0]
 
+            canonical = getOption(context, 'canonicalHost')
             if canonical == '%s.onlinegroups.net' % siteId:
                 retval = '%s@onlinegroups.net' % supportGroupId
             elif canonical != 'onlinegroups.net':
                 retval = '%s@%s' % (supportGroupId, canonical)
-
-    if not retval:
-        retval = support_email
 
     assert retval
     assert '@' in retval
