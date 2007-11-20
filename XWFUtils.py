@@ -24,7 +24,7 @@ A collection of generally useful utility functions.
 from Acquisition import aq_get
 from AccessControl import getSecurityManager
 from App.config import getConfiguration
-import re
+import re, string
 
 import pytz
 import DateTime
@@ -517,4 +517,18 @@ def get_support_email(context, siteId):
     assert retval
     assert '@' in retval
     return retval
+    
+def convert_int2b(num, alphabet, converted=[]):
+    mod = num % len(alphabet); rem = num / len(alphabet)
+    converted.append(alphabet[mod])
+    if rem:
+        return convert_int2b(rem, alphabet, converted)
+    converted.reverse()
+    retval = ''.join(converted)
+    return retval
 
+def convert_int2b62(num):
+    alphabet = string.printable[:62]
+    retval = convert_int2b(num, alphabet, [])
+    return retval
+    
