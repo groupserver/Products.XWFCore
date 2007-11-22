@@ -487,7 +487,7 @@ def get_group_by_siteId_and_groupId(context, siteId, groupId):
 
 def get_support_email(context, siteId):
     assert siteId
-    
+
     site = get_site_by_id(context, siteId)
     assert site
 
@@ -495,20 +495,23 @@ def get_support_email(context, siteId):
     retval = support_email
 
     if support_email == 'support@onlinegroups.net':
-        supportGroupId = '%s_support' % siteId
         groupsFolder = getattr(site, 'groups')
         assert groupsFolder, "Site %s has no groups" % siteId
 
         folders = ('Folder', 'Folder (Ordered)')
         groups = [g for g in groupsFolder.objectValues(folders)
-            if (g and g.getProperty('is_group', False) and g.getId() == supportGroupId)]
+            if (g and g.getProperty('is_group', False) and 
+              (g.getProperty('group_template', '') == 'support'))]
 
         if groups:
+            print 'found match'
             assert len(groups) == 1, \
                 'Groups folder of %s is in a weird state' % siteId
             group = groups[0]
+            supportGroupId = group.getId()
+            print supportGroupId
 
-            canonical = getOption(context, 'canonicalHost')
+            canonical = getOption(group, 'canonicalHost')
             if canonical == '%s.onlinegroups.net' % siteId:
                 retval = '%s@onlinegroups.net' % supportGroupId
             elif canonical != 'onlinegroups.net':
