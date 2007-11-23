@@ -5,6 +5,9 @@
 # Last Updated: 2002/01/21
 # Version no: 1.2
 # Category: Extending 
+
+from UserDict import UserDict
+
 class ODict(UserDict):
     def __init__(self, dict = None):
         self._keys = []
