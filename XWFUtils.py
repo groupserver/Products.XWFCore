@@ -326,7 +326,11 @@ def getOption(obj, name, default=None):
         if siteConfig:
             option = siteConfig.getProperty(name, None)
     
-    return option or default
+    if option == None:
+        retval = default
+    else:
+        retval = option
+    return retval
 
 def getNotificationTemplate(obj, n_type, n_id):
     site_root = obj.site_root()
