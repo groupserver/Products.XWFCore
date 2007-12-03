@@ -316,12 +316,12 @@ def getOption(obj, name, default=None):
     except:
         option = None
                 
-    if not option:    
+    if option == None:    
         divConfig = getToolByName(obj, 'DivisionConfiguration', None)
         if divConfig:
             option = divConfig.getProperty(name, None)
     
-    if not option:
+    if option == None:
         siteConfig = getToolByName(obj, 'GlobalConfiguration', None)
         if siteConfig:
             option = siteConfig.getProperty(name, None)
