@@ -508,12 +508,10 @@ def get_support_email(context, siteId):
               (g.getProperty('group_template', '') == 'support'))]
 
         if groups:
-            print 'found match'
             assert len(groups) == 1, \
                 'Groups folder of %s is in a weird state' % siteId
             group = groups[0]
             supportGroupId = group.getId()
-            print supportGroupId
 
             canonical = getOption(group, 'canonicalHost')
             if canonical == '%s.onlinegroups.net' % siteId:
