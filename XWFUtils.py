@@ -360,15 +360,20 @@ def get_user( context, user_id ):
     
     return user
 
-def get_user_realnames( user_object=None, user_id='' ):
+def get_user_realnames( usr=None, user_id='' ):
     """ If the user is real, get their preferredName, otherwise
         return some other string.
     
     """
-    if user_object:
-        return '%s' % (user_object.getProperty('preferredName'))
-
-    return '%s (account removed)' % user_id
+    if usr:
+        fn = usr.getProperty('fn')
+        if not fn:
+            fn = usr.getProperty('preferredName')
+    else:
+        fn = '%s (account removed)' % user_id
+    retval = '%s' % fn
+    assert retval
+    return retval
 
 def change_timezone(dt, timezone):
     # if we are a float, make the (rather dubious) assumption that we're
