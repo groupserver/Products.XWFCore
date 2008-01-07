@@ -57,3 +57,5 @@ validator_security = ModuleSecurityInfo('Products.XWFCore.validators')
 validator_security.declarePublic('validate_email')
 validator_security.declarePublic('ValidationError')
 
+from odict import ODict
+
