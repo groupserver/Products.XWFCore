@@ -542,32 +542,22 @@ def convert_int2b62(num):
     retval = convert_int2b(num, alphabet, [])
     return retval
 
-def get_doc_metadata(doc):
-    """Get Document Metadata
+def get_document_metadata(document):
+    """ Get Document Metadata
     
-    Given a document, return a dictionary of values.
-    Return placeholder values if the document is not found.
+        Given a document, return a dictionary of
+        values: title, size (in KB) and content-type.
     """
-    if doc:
-        doc_title = doc.title_or_id()
-        doc_size = doc.get_size() / 1024
-
-        doc_content = doc.getContentType()
-        if doc_content.find('excel'):
-            doc_type = 'Excel'
-        elif doc_content.find('pdf'):
-            doc_type = 'PDF'
-        elif doc_content.find('word'):
-            doc_type = 'Word'
-
-        if doc_type:
-            doc_class = '%slink' % doc_type.lower()
+    assert document, "No document provided"
+    
+    doc_title = document.title_or_id()
+    doc_size = document.get_size() / 1024
+    doc_content = document.getContentType()
 
     retval = {
-        'title' : doc_title or 'Document Not Found';
-        'size'  : doc_size or '???';
-        'type'  : doc_type or 'None';
-        'class' : doc_class or ''
-      }
+        'title' : doc_title,
+        'size'  : doc_size,
+        'type'  : doc_content
+    }
     return retval
     

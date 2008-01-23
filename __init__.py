@@ -41,6 +41,7 @@ xwfutils_security.declarePublic('get_group_by_siteId_and_groupId')
 xwfutils_security.declarePublic('get_support_email')
 xwfutils_security.declarePublic('convert_int2b62')
 xwfutils_security.declarePublic('get_user_realnames')
+xwfutils_security.declarePublic('get_document_metadata')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
