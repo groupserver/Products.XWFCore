@@ -355,7 +355,7 @@ def getNotificationTemplate(obj, n_type, n_id):
 def get_user( context, user_id ):
     acl_users = getToolByName( context, 'acl_users', None )
     user = None
-    if acl_users:
+    if acl_users and user_id:
         user = acl_users.getUser( user_id )
     
     return user
