@@ -29,6 +29,8 @@ import re, string
 import pytz
 import DateTime
 import datetime
+import time
+import md5
 try:
    # prior to zope 3.3
    from zope.datetime import parseDatetimetz
@@ -561,3 +563,13 @@ def get_document_metadata(document):
     }
     return retval
     
+def generate_verification_id(email):
+    """ Given an email address, generate a verification id
+    """
+    assert email, "No email address provided"
+    
+    # Let us hope that the verification ID *is* unique
+    vNum = long(md5.new(time.asctime() + email).hexdigest(), 16)
+    verificationId = str(convert_int2b62(vNum))
+    return verificationId
+
