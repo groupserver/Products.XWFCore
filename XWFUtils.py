@@ -1,4 +1,4 @@
-# Copyright (C) 2003,2004 IOPEN Technologies Ltd.
+ Copyright (C) 2003,2004 IOPEN Technologies Ltd.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -363,10 +363,11 @@ def get_user( context, user_id ):
     return user
 
 def get_user_realnames( usr=None, user_id='' ):
-    """ If the user is real, get their preferredName, otherwise
+    """ If the user is real, get their fn, otherwise
         return some other string.
     
     """
+    assert (usr != None) or (user_id != ''), 'Must supply a user or user id'
     if usr:
         fn = usr.getProperty('fn')
         if not fn:
@@ -374,7 +375,9 @@ def get_user_realnames( usr=None, user_id='' ):
     else:
         fn = '%s (account removed)' % user_id
     retval = '%s' % fn
-    assert retval
+    assert retval, \
+      'No retval when given usr %s and user_id %s' % (usr, user_id)
+    assert type(retval) in (str, unicode)
     return retval
 
 def change_timezone(dt, timezone):
