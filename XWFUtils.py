@@ -508,7 +508,10 @@ def get_support_email(context, siteId):
     support_email = getOption(context, 'supportEmail')
     retval = support_email
 
-    if support_email == 'support@onlinegroups.net':
+    # AM: Temporarily directing all OGN support queries to
+    #  support@onlinegroups.net
+    #if support_email == 'support@onlinegroups.net':
+    if False:
         groupsFolder = getattr(site, 'groups')
         assert groupsFolder, "Site %s has no groups" % siteId
 
