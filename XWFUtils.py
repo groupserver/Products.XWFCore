@@ -362,13 +362,13 @@ def get_user( context, user_id ):
     
     return user
 
-def get_user_realnames( usr=None, user_id='' ):
+def get_user_realnames( usr=None, user_id='', context=None ):
     """ If the user is real, get their fn, otherwise
         return some other string.
     
     """
     # assert (usr != None) or (user_id != ''), 'Must supply a user or user id'
-    if not(usr):
+    if not(usr) and context:
         usr = get_user(context, user_id)
     if usr:
         fn = usr.getProperty('fn')
