@@ -368,6 +368,8 @@ def get_user_realnames( usr=None, user_id='' ):
     
     """
     # assert (usr != None) or (user_id != ''), 'Must supply a user or user id'
+    if not(usr):
+        usr = get_user(context, user_id)
     if usr:
         fn = usr.getProperty('fn')
         if not fn:
