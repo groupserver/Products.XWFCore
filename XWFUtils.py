@@ -581,3 +581,16 @@ def generate_verification_id(email):
     verificationId = str(convert_int2b62(vNum))
     return verificationId
 
+def users_can_join_group(groupId, reasonNeeded=False):
+    """ Given a group, return whether the group is
+        is in a joinable state
+    """
+    assert groupId, "No group ID provided"
+
+    if reasonNeeded:
+        retval = (True, (100, 'Users can always join'))
+    else:
+        retval = True
+    assert retval
+    return retval
+
