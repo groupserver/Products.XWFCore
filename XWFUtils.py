@@ -594,3 +594,50 @@ def users_can_join_group(groupId, reasonNeeded=False):
     assert retval
     return retval
 
+def entity_exists(context, entityId):
+    '''Check whether something with this id already exists
+    '''
+    assert entityId, 'No entity id provided'
+
+    site_root = context.site_root()
+    assert site_root, 'Could not find site root'
+
+    # Does a site exist with id entityId?
+    assert hasattr(site_root, 'Content'), 'No Content'
+    sitesContainer = site_root.Content
+    siteIds = [ s.getId() for s in sitesContainer.objectValues('Folder') if s.getProperty('is_division', False) ]
+    if entityId in siteIds:
+        return 1
+
+    # Does a group exist with id entityId?
+    assert hasattr(site_root, 'ListManager'), 'No ListManager'
+    listManager = site_root.ListManager
+    groupIds = [ m.getId() for m in listManager.objectValues('XWF Mailing List') ]
+    if entityId in groupIds:
+        return 2
+
+    # Does a user exist with id entityId?
+    assert hasattr(site_root, 'acl_users'), 'No acl_users'
+    if site_root.acl_users.getUserById(entityId):
+        return 3
+
+    # The following two checks should *NOT* hold if we have got this far.
+    # 1. Check in ACL Users
+    try:
+        site_root.acl_users.getGroupById('%s_member' % entityId)
+    except:
+        pass
+    else:
+        return 4
+        
+    # 2. Check in the add_group email template
+    assert hasattr(site_root, 'Templates'), 'No Templates'
+    addGroupNotification = site_root.Templates.email.notifications.add_group
+    ids = list(addGroupNotification.getProperty('ignore_ids'))
+    if '%s_member' % entityId in ids:
+        return 5
+
+    # If we are here, then all is well in the world
+
+    return False
+    

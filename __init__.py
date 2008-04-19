@@ -44,6 +44,7 @@ xwfutils_security.declarePublic('get_user_realnames')
 xwfutils_security.declarePublic('get_document_metadata')
 xwfutils_security.declarePublic('generate_verification_id')
 xwfutils_security.declarePublic('users_can_join_group')
+xwfutils_security.declarePublic('entity_exists')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
