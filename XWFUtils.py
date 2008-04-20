@@ -605,14 +605,14 @@ def entity_exists(context, entityId):
     # Does a site exist with id entityId?
     assert hasattr(site_root, 'Content'), 'No Content'
     sitesContainer = site_root.Content
-    siteIds = [ s.getId() for s in sitesContainer.objectValues('Folder') if s.getProperty('is_division', False) ]
+    siteIds = [ s[0] for s in sitesContainer.objectItems('Folder') if s[1].getProperty('is_division', False) ]
     if entityId in siteIds:
         return 1
 
     # Does a group exist with id entityId?
     assert hasattr(site_root, 'ListManager'), 'No ListManager'
     listManager = site_root.ListManager
-    groupIds = [ m.getId() for m in listManager.objectValues('XWF Mailing List') ]
+    groupIds = [ m[0] for m in listManager.objectItems('XWF Mailing List') ]
     if entityId in groupIds:
         return 2
 
