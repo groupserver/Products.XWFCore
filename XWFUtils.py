@@ -640,4 +640,14 @@ def entity_exists(context, entityId):
     # If we are here, then all is well in the world
 
     return False
+
+def add_marker_interfaces(object, interfaces):
+    ''' Add given marker interfaces to a given object.
+    '''
+    from Products.Five.utilities.interfaces import IMarkerInterfaces
+    adapted_to_marker = IMarkerInterfaces(object)
+    add = adapted_to_marker.dottedToInterfaces(interfaces)
+    adapted_to_marker.update(add=add)
+    
+    return True
     
