@@ -49,6 +49,10 @@ class ICache(Interface):
         """ Remove an object from the cache by key.
 
         """
+        
+    def clear():
+        """Clear all instances from a cache
+        """
 
 class SimpleCache:
     """ Implement ICache with no expiry.
@@ -91,6 +95,9 @@ class SimpleCache:
             del(self.cache[key])
         except KeyError, e:
             pass
+            
+    def clear(self):
+        self.cache = {}
 
 class SimpleCacheWithExpiry:
     """ Implement ICache with expiry.
@@ -144,6 +151,9 @@ class SimpleCacheWithExpiry:
             del(self.cache[key])
         except KeyError, e:
             pass
+
+    def clear(self):
+        self.cache = {}        
 
 class LRUCache:
     """ Implements a ICache based on a Least Recently Used mechanism.
@@ -201,4 +211,8 @@ class LRUCache:
             del(self.cache[key])
         except KeyError, e:
             pass
+
+    def clear(self):
+        self.cache = {}
+        self.cache_keys = []
 
