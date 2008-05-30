@@ -537,7 +537,7 @@ def get_group_metadata_by_id(context, groupId):
                     object._p_deactivate()
                     if group_id == groupId:
                         bottom = time.time()
-                        log.info("Breaking early populating GroupMetadataCache, took %s secs" % (bottom-top))
+                        log.info("Breaking early populating GroupMetadataCache, took %s ms" % ((bottom-top)*1000.0))
 
                         return metadata
         
