@@ -24,6 +24,11 @@ A collection of generally useful utility functions.
 from Acquisition import aq_get
 from AccessControl import getSecurityManager
 from App.config import getConfiguration
+
+from cache import SimpleCache
+
+GroupMetadataCache = SimpleCache()
+
 import re, string
 
 import pytz
@@ -31,6 +36,10 @@ import DateTime
 import datetime
 import time
 import md5
+
+import logging
+log = logging.getLogger('XWFCore.XWFUtils')
+
 try:
    # prior to zope 3.3
    from zope.datetime import parseDatetimetz
@@ -457,21 +466,85 @@ def all_timezones():
 def curr_time():
     return datetime.datetime.now(pytz.utc)
 
+def get_current_virtual_site(context):
+    while context:
+        try:
+            in_site = context.getProperty('is_division')
+            if in_site:
+                break
+        except AttributeError:
+            pass
+        context = context.aq_parent
+        
+    return context.aq_explicit
+
+def get_virtual_site_objects(context, current_first=True):
+    site_root = context.site_root()
+    
+    objects = []
+    for object_id in site_root.Content.objectIds(('Folder', 'Folder (Ordered)')):
+        object = site_root.Content.restrictedTraverse(object_id, None)
+        if object:
+            try:
+                if object.getProperty('is_division', False):
+                    objects.append(object)
+            except:
+                pass
+    
+    if current_first:
+        current_site = get_current_virtual_site(context)
+        if current_site:
+            objects.remove(current_site)
+            objects.insert(0, current_site)   
+
+    return objects
+
 def get_site_by_id(context, siteId):
     assert siteId
     
     site_root = context.site_root()
-    folders = ('Folder', 'Folder (Ordered)')
-    sites = [s for s in site_root.Content.objectValues(folders) 
-      if (s and s.getProperty('is_division', False) and s.getId() == siteId)]
-    if sites:
-        assert len(sites) == 1, 'Content folder is in a weird state'
-        retval = sites[0]
+
+    site = getattr(site_root.Content, siteId, None)
+    if site and site.getProperty('is_division', False):
+        retval = site
     else:
         retval = None
     
-    assert ((retval == None) or (retval.getId() == siteId))
     return retval
+
+def get_group_metadata_by_id(context, groupId):
+    """ Get the metadata of a group by it's ID.
+
+    """
+    if GroupMetadataCache.has_key(groupId):
+        return GroupMetadataCache.get(groupId)
+    
+    vsites = get_virtual_site_objects(context)
+
+    top = time.time()
+    log.info("Populating GroupMetadataCache")
+    for site in vsites:
+        groups = getattr(site, 'groups', None)
+        if groups and getattr(groups, 'is_groups', False):
+            for object in groups.objectValues(('Folder',
+                                               'Folder (Ordered)')):
+                if getattr(object, 'is_group', False):
+                    group_id = object.getId()
+                    metadata = {'title': object.title_or_id(),
+                                'site': site.getId()}
+                    GroupMetadataCache.add(group_id, metadata)
+                    # make it a ghost
+                    object._p_deactivate()
+                    if group_id == groupId:
+                        bottom = time.time()
+                        log.info("Breaking early populating GroupMetadataCache, took %s secs" % (bottom-top))
+
+                        return metadata
+        
+    bottom = time.time()
+    log.info("Populated GroupMetadataCache, but didn't find group, took %s secs" % (bottom-top))    
+    
+    return None
 
 def get_group_by_siteId_and_groupId(context, siteId, groupId):
     """Get Web-Group by ID
@@ -488,17 +561,13 @@ def get_group_by_siteId_and_groupId(context, siteId, groupId):
     groupsFolder = getattr(site, 'groups')
     assert groupsFolder, 'The site %s has no groups' % siteId
 
-    folders = ('Folder', 'Folder (Ordered)')
-    groups = [g for g in groupsFolder.objectValues(folders)
-        if (g and g.getProperty('is_group', False) and g.getId() == groupId)]
-    if groups:
-        assert len(groups) == 1, \
-          'Groups folder of %s is in a weird state' % siteId
-        retval = groups[0]
+    group = getattr(groupsFolder, groupId, None)
+
+    if group and group.getProperty('is_group', False):
+        retval = group
     else:
         retval = None
     
-    assert ((retval == None) or (retval.getId() == groupId))
     return retval
 
 def get_support_email(context, siteId):
