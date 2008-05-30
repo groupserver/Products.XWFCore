@@ -87,7 +87,10 @@ class SimpleCache:
         return self.cache.get(key, None)
 
     def remove(self, key):
-        del(self.cache[key])
+        try:
+            del(self.cache[key])
+        except KeyError, e:
+            pass
 
 class SimpleCacheWithExpiry:
     """ Implement ICache with expiry.
@@ -137,7 +140,10 @@ class SimpleCacheWithExpiry:
         return retval
 
     def remove(self, key):
-        del(self.cache[key])
+        try:
+            del(self.cache[key])
+        except KeyError, e:
+            pass
 
 class LRUCache:
     """ Implements a ICache based on a Least Recently Used mechanism.
@@ -191,5 +197,8 @@ class LRUCache:
         return self.cache.get(key, None)
 
     def remove(self, key):
-        del(self.cache[key])
+        try:
+            del(self.cache[key])
+        except KeyError, e:
+            pass
 
