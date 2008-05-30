@@ -5,8 +5,12 @@
 
 from zope.interface.declarations import implements
 from zope.interface.interface import Interface
-import ThreadLock
 import datetime
+
+from threading import Lock
+
+import logging
+log = logging.getLogger('XWFCore.cache')
 
 class ICache(Interface):
     def set_max_objects(max):
@@ -41,12 +45,17 @@ class ICache(Interface):
         
         """
 
+    def remove(key):
+        """ Remove an object from the cache by key.
+
+        """
+
 class SimpleCache:
     """ Implement ICache with no expiry.
     
     """
     implements(ICache)
-    __thread_lock = ThreadLock.allocate_lock()
+    __thread_lock = Lock()
     def __init__(self):
         self.cache = {}
         
@@ -58,10 +67,16 @@ class SimpleCache:
         
     def add(self, key, object):
         try:
-            self.__thread_lock.acquire()
+            if not self.__thread_lock.acquire(False):
+                log.info("Not adding object to cache, would have required blocking")
+                return False
+            
             self.cache[key] = object
         finally:
-            self.__thread_lock.release()
+            try:
+                self.__thread_lock.release()
+            except:
+                pass
         
         return True
     
@@ -71,12 +86,15 @@ class SimpleCache:
     def get(self, key):
         return self.cache.get(key, None)
 
+    def remove(self, key):
+        del(self.cache[key])
+
 class SimpleCacheWithExpiry:
     """ Implement ICache with expiry.
     
     """
     implements(ICache)
-    __thread_lock = ThreadLock.allocate_lock()
+    __thread_lock = Lock()
     def __init__(self):
         self.cache = {}
         self.expiry_interval = None
@@ -92,11 +110,16 @@ class SimpleCacheWithExpiry:
         
     def add(self, key, object):
         try:
-            self.__thread_lock.acquire()
+            if not self.__thread_lock.acquire(False):
+                log.info("Not adding object to cache, would have required blocking")
+                return False
             self.cache[key] = (datetime.datetime.now()+self.expiry_interval,
                                object)
         finally:
-            self.__thread_lock.release()
+            try:
+                self.__thread_lock.release()
+            except:
+                pass
         
         return True
     
@@ -113,12 +136,15 @@ class SimpleCacheWithExpiry:
             
         return retval
 
+    def remove(self, key):
+        del(self.cache[key])
+
 class LRUCache:
     """ Implements a ICache based on a Least Recently Used mechanism.
     
     """
     implements(ICache)
-    __thread_lock = ThreadLock.allocate_lock()
+    __thread_lock = Lock()
     def __init__(self):
         self.cache = {}
         self.cache_keys = []
@@ -148,13 +174,22 @@ class LRUCache:
     
     def add(self, key, object):
         try:
-            self.__thread_lock.acquire()
+            if not self.__thread_lock.acquire(False):
+                log.info("Not adding object to cache, would have required blocking")
+                return False
             return self.__do_add(key, object)
         finally:
-            self.__thread_lock.release()
+            try:
+                self.__thread_lock.release()
+            except:
+                pass
     
     def has_key(self, key):
         return self.cache.has_key(key)
         
     def get(self, key):
         return self.cache.get(key, None)
+
+    def remove(self, key):
+        del(self.cache[key])
+
