@@ -27,7 +27,7 @@ from App.config import getConfiguration
 
 from cache import SimpleCache
 
-GroupMetadataCache = SimpleCache()
+GroupMetadataCache = SimpleCache("GroupMetadataCache")
 
 import re, string
 

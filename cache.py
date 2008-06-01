@@ -60,8 +60,9 @@ class SimpleCache:
     """
     implements(ICache)
     __thread_lock = Lock()
-    def __init__(self):
+    def __init__(self, cache_name=''):
         self.cache = {}
+        self.cache_name = cache_name
         
     def set_max_objects(self, max):
         raise NotImplementedError
@@ -72,7 +73,7 @@ class SimpleCache:
     def add(self, key, object):
         try:
             if not self.__thread_lock.acquire(False):
-                log.info("Not adding object to cache, would have required blocking")
+                log.info("Cache (%s), not adding object to cache, would have required blocking" % self.cache_name)
                 return False
             
             self.cache[key] = object
@@ -81,6 +82,8 @@ class SimpleCache:
                 self.__thread_lock.release()
             except:
                 pass
+
+        log.info("Cache (%s) size is now %s, key %s" % (self.cache_name, len(self.cache), key))
         
         return True
     
@@ -105,9 +108,10 @@ class SimpleCacheWithExpiry:
     """
     implements(ICache)
     __thread_lock = Lock()
-    def __init__(self):
+    def __init__(self, cache_name=''):
         self.cache = {}
         self.expiry_interval = None
+        self.cache_name = cache_name
                 
     def set_max_objects(self, max):
         raise NotImplementedError
@@ -121,7 +125,7 @@ class SimpleCacheWithExpiry:
     def add(self, key, object):
         try:
             if not self.__thread_lock.acquire(False):
-                log.info("Not adding object to cache, would have required blocking")
+                log.info("Not adding object to cache (%s), would have required blocking" % self.cache_name)
                 return False
             self.cache[key] = (datetime.datetime.now()+self.expiry_interval,
                                object)
@@ -130,6 +134,10 @@ class SimpleCacheWithExpiry:
                 self.__thread_lock.release()
             except:
                 pass
+
+        log.info("Cache (%s) size is now %s key %s" % (self.cache_name,
+                                                       len(self.cache),
+                                                       key))
         
         return True
     
@@ -161,11 +169,12 @@ class LRUCache:
     """
     implements(ICache)
     __thread_lock = Lock()
-    def __init__(self):
+    def __init__(self, cache_name=''):
         self.cache = {}
         self.cache_keys = []
         self.set_max_objects(128) # set default
-        
+        self.cache_name = cache_name        
+
     def set_max_objects(self, size):
         self.cache_size = size
 
@@ -185,14 +194,19 @@ class LRUCache:
             for key in self.cache_keys[self.cache_size:]:
                 del(self.cache[key])
                 self.cache_keys = self.cache_keys[:self.cache_size]
+
+        log.info("Cache (%s) size is now %s key %s" % (self.cache_name,
+                                                       len(self.cache),
+                                                       key))
                 
         return True
     
     def add(self, key, object):
         try:
             if not self.__thread_lock.acquire(False):
-                log.info("Not adding object to cache, would have required blocking")
+                log.info("Not adding object to cache (%s), would have required blocking" % self.cache_name)
                 return False
+
             return self.__do_add(key, object)
         finally:
             try:
