@@ -123,7 +123,7 @@ class SimpleCacheWithExpiry:
     def add(self, key, object):
         try:
             if not self.__thread_lock.acquire(False):
-                log.info("Not adding object to cache (%s), would have required blocking" % self.cache_name)
+                log.info("Cache (%s), not adding object (%s) to cache, would have required blocking" % (self.cache_name, key))
                 return False
             self.cache[key] = (datetime.datetime.now()+self.expiry_interval,
                                object)
@@ -133,10 +133,6 @@ class SimpleCacheWithExpiry:
             except:
                 pass
 
-        log.info("Cache (%s) size is now %s key %s" % (self.cache_name,
-                                                       len(self.cache),
-                                                       key))
-        
         return True
     
     def has_key(self, key):
@@ -193,16 +189,12 @@ class LRUCache:
                 del(self.cache[key])
                 self.cache_keys = self.cache_keys[:self.cache_size]
 
-        log.info("Cache (%s) size is now %s key %s" % (self.cache_name,
-                                                       len(self.cache),
-                                                       key))
-                
         return True
     
     def add(self, key, object):
         try:
             if not self.__thread_lock.acquire(False):
-                log.info("Not adding object to cache (%s), would have required blocking" % self.cache_name)
+                log.info("Cache (%s), not adding object (%s) to cache, would have required blocking" % (self.cache_name, key))
                 return False
 
             return self.__do_add(key, object)
