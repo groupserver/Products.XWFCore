@@ -73,7 +73,7 @@ class SimpleCache:
     def add(self, key, object):
         try:
             if not self.__thread_lock.acquire(False):
-                log.info("Cache (%s), not adding object to cache, would have required blocking" % self.cache_name)
+                log.info("Cache (%s), not adding object (%s) to cache, would have required blocking" % (self.cache_name, key))
                 return False
             
             self.cache[key] = object
@@ -83,8 +83,6 @@ class SimpleCache:
             except:
                 pass
 
-        log.info("Cache (%s) size is now %s, key %s" % (self.cache_name, len(self.cache), key))
-        
         return True
     
     def has_key(self, key):
