@@ -391,6 +391,22 @@ def get_user_realnames( usr=None, user_id='', context=None ):
     assert type(retval) in (str, unicode)
     return retval
 
+def rfc822_date(dt, interval=0):
+    """ Convert a UTC datetime object into an RFC 822 formatted date, optionally
+    shifted by an interval.
+    
+    """
+    if interval:
+        dt = dt+datetime.timedelta(interval)
+    
+    # pinched from the rfc822 library
+    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (
+            ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][dt.weekday()],
+            dt.day,
+            ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][dt.month-1],
+            dt.year, dt.hour, dt.minute, dt.second)
+
 def change_timezone(dt, timezone):
     # if we are a float, make the (rather dubious) assumption that we're
     # looking at a UTC timestamp
