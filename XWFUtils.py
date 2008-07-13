@@ -735,4 +735,18 @@ def add_marker_interfaces(object, interfaces):
     adapted_to_marker.update(add=add)
     
     return True
+
+def sort_by_name(a, b):
+    assert hasattr(a, 'name')
+    assert hasattr(b, 'name')
     
+    if   (a.name < b.name):
+        retval = -1
+    elif (a.name == b.name):
+        retval =  0
+    else:#a.name > b.name
+        retval =  1
+        
+    assert type(retval) == int
+    return retval
+
