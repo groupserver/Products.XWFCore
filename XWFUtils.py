@@ -750,3 +750,57 @@ def sort_by_name(a, b):
     assert type(retval) == int
     return retval
 
+
+def timedelta_to_string(td):
+    '''Convert a time delta to a Unicode string.
+    
+    Inspired by Recipe 498062
+      http://code.activestate.com/recipes/498062/
+    
+    ARGUMENTS
+      td:   Time delta
+      
+    RETURNS
+      A Unicode string, representing the time-delta.
+       
+    SIDE EFFECTS
+      None'''
+    assert isinstance(td, datetime.timedelta)
+    deltas = []
+    s = int(td.days * 86400 + td.seconds)
+    #              Unit     Seconds
+    unitLimits = [("year",  31536000),
+                  ("month",  2592000),
+                  ("week",    604800),
+                  ("day",      86400),
+                  ("hour",      3600),
+                  ("minute",      60),
+                  ("second",       1)]
+    for unit, limit in unitLimits:
+        tdInUnit = s/limit
+        if tdInUnit:
+          if (tdInUnit > 1):
+              # Plural
+              deltas.append(u'%d %ss' % (tdInUnit, unit))
+          else:
+              deltas.append(u'%d %s' % (tdInUnit, unit))
+          s = s - (tdInUnit * limit)
+    retval = comma_comma_and(deltas)
+    assert type(retval) == unicode
+    return retval
+
+def comma_comma_and(l):
+    '''Join a list of strings joined with commas and an "and".
+    
+      Turn a list (or tuple) of strings into a single string, with all
+      the items joined by ", " except for the last two, which are joined
+      by " and ". If there is only one item in the list, it is returned.
+    '''
+    assert type(l) in [list, tuple], '%s, not a list or tuple' % type(l)
+    if len(l) == 1:
+        retval = l[0]
+    else:
+        retval = u' and '.join((u', '.join(l[:-1]), l[-1]))
+    assert type(retval) in (unicode, str)
+    return retval
+
