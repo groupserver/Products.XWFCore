@@ -48,6 +48,8 @@ xwfutils_security.declarePublic('users_can_join_group')
 xwfutils_security.declarePublic('entity_exists')
 xwfutils_security.declarePublic('add_marker_interfaces')
 xwfutils_security.declarePublic('sort_by_name')
+xwfutils_security.declarePublic('comma_comma_and')
+xwfutils_security.declarePublic('timedelta_to_string')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')
