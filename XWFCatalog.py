@@ -17,12 +17,9 @@
 # You MUST follow the rules in http://iopen.net/STYLE before checking in code
 # to the trunk. Code which does not follow the rules will be rejected.
 #
-from types import StringType
-
 from AccessControl import getSecurityManager
 from AccessControl import ClassSecurityInfo
 from Products.ZCatalog.ZCatalog import ZCatalog
-from Acquisition import aq_base
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 import logging

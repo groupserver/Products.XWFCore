@@ -17,13 +17,14 @@
 # You MUST follow the rules in http://iopen.net/STYLE before checking in code
 # to the trunk. Code which does not follow the rules will be rejected.
 #
+import random
+import cgi
 __doc__ = """
 A collection of generally useful utility functions.
 
 """
 from Acquisition import aq_get
 from AccessControl import getSecurityManager
-from App.config import getConfiguration
 
 from cache import SimpleCache
 
@@ -41,10 +42,10 @@ import logging
 log = logging.getLogger('XWFCore.XWFUtils')
 
 try:
-   # prior to zope 3.3
-   from zope.datetime import parseDatetimetz
+    # prior to zope 3.3
+    from zope.datetime import parseDatetimetz
 except ImportError:
-   from zope.app.datetimeutils import parseDatetimetz
+    from zope.app.datetimeutils import parseDatetimetz
 
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
@@ -90,7 +91,6 @@ def createRequestFromRequest(request, filternull=1, **kws):
     return '&'.join(nrequest)
 
 def convertTextToId(text):
-    import string
     safe = string.digits + string.ascii_letters
     s = []
     for i in text:
@@ -180,7 +180,6 @@ def createBatch(result_set, b_start, b_size):
     return (b_start, b_end, b_size, result_size, result_set) 
 
 def normalize_user_id(user_id):
-    import string
     valid_chars = string.ascii_letters+string.digits+'-'+'_'
     id_chars = []
     for char in user_id:
@@ -231,9 +230,8 @@ readable_passchars = ['%', '+', '2', '3', '4', '5',
                       'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
             
 def generate_password(length=8):
-    import random
     password = ''
-    for i in xrange(length):
+    for i in xrange(length): #@UnusedVariable
         password += random.choice(readable_passchars)
         
     return password
@@ -248,7 +246,6 @@ def convert_int2b(num, base, alphabet, converted=[]):
     return ''.join(converted)
 
 def convert_int2b62(num):
-    import sys, string
     alphabet = string.printable[:62]
 
     return convert_int2b(num, 62, alphabet, [])
@@ -256,9 +253,7 @@ def convert_int2b62(num):
 def generate_accesscode(seed_string):
     """ Generate a random string for (among other things) validating users.
     
-    """
-    import md5, DateTime
-    
+    """    
     num = long(md5.new(seed_string+str(DateTime.DateTime())).hexdigest(), 16)
     access_code = convert_int2b62(num)
     
@@ -283,8 +278,6 @@ def assign_ownership(object, owner, recursive=0, acl_user_path='/acl_users'):
     return 1
 
 def markupEmail(text):
-    import re, cgi
-    
     text = cgi.escape(text)
     text = re.sub('(?i)(http://|https://)(.+?)(\&lt;|\&gt;|\)|\]|\}|\"|\'|$|\s)',
            '<email:link url="\g<1>\g<2>">\g<1>\g<2></email:link>\g<3>',

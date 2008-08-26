@@ -17,7 +17,7 @@
 # You MUST follow the rules in http://iopen.net/STYLE before checking in code
 # to the trunk. Code which does not follow the rules will be rejected.
 #
-from AccessControl import Role, getSecurityManager, ClassSecurityInfo
+from AccessControl import Role, ClassSecurityInfo
 from Products.ZCatalog.CatalogPathAwareness import CatalogAware
 from Products.XWFCore.XWFUtils import getToolByName
 

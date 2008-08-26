@@ -31,7 +31,7 @@ class CSV:
 		i = 0
 		for headerName in headers:
 			headerName = self.clean_up(headerName)
-	                #afix type attribute to the header
+			# afix type attribute to the header
 			headerData = {'id': headerName,
 				      'type': headerTypes[i]}	
 			self.headers.append(headerData)
@@ -64,7 +64,7 @@ class CSV:
 						itemList.append(-1)
 					else:
 						itemList.append(self.headers[column]['type'](item))
-				except ValueError, e:
+				except ValueError, e: #@UnusedVariable
 					msg = 'Could not convert "%s" to "%s"' %(str(item), str(self.headers[column]['type']))
 					msg = '%s\n(%s: Row %d, Column %d)\n' %(msg, self.headers[column]['id'], row, column)
 					sys.stderr.write(msg)
@@ -77,6 +77,6 @@ class CSV:
 			row = row + 1
 	
 class CSVFile(CSV):
-    def __init__(self, csvFile, headerTypes):
-        self.read_headers(csvFile, headerTypes)
-        self.read_main(csvFile)
+	def __init__(self, csvFile, headerTypes):
+		self.read_headers(csvFile, headerTypes)
+		self.read_main(csvFile)
