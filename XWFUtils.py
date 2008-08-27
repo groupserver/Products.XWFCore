@@ -17,6 +17,7 @@
 # You MUST follow the rules in http://iopen.net/STYLE before checking in code
 # to the trunk. Code which does not follow the rules will be rejected.
 #
+import os
 import random
 import cgi
 __doc__ = """
@@ -24,6 +25,8 @@ A collection of generally useful utility functions.
 
 """
 from Acquisition import aq_get
+from App.config import getConfiguration
+
 from AccessControl import getSecurityManager
 
 from cache import SimpleCache
@@ -47,6 +50,25 @@ try:
 except ImportError:
     from zope.app.datetimeutils import parseDatetimetz
 
+def locateDataDirectory(component):
+    """ Create and return the string representing the data directory for
+    a given component, eg. groupserver.GSFeedParser
+    
+    """
+    config = getConfiguration()
+    client_home = config.clienthome
+    
+    assert os.path.isdir(client_home), \
+              'Directory "%s" does not exist' % client_home 
+    
+    data_dir = os.path.join(client_home, 'groupserver.data',
+                            component)
+    
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir, 0700)
+        
+    return data_dir
+    
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
         get_xml method of those results.
