@@ -20,7 +20,7 @@
 from Interface import Interface
 
 class IXWFMetadataProvider(Interface):
-    def get_metadataNSPrefix(ns):
+    def get_metadataNSPrefix(ns): #@NoSelf
         """ Return the prefix for namespace requested.
         
             Note that the default namespace will be returned as a prefix
@@ -28,74 +28,69 @@ class IXWFMetadataProvider(Interface):
         
         """
         
-    def get_metadataNSPrefixMap():
-        """ Return a dictionary of all known metadata namespace -> prefix
-        mappings.
-        
-        """
-        
-    def get_metadataPrefixNSMap():
+    def get_metadataPrefixNSMap(): #@NoSelf
         """ Return a dictionary of all known metadata prefix -> namespace
         mappings.
         
         """
+
+    def get_metadataNSPrefixMap(ns_prefix): #@NoSelf
+        """ Returns a dictionary of metadata for a particular NS.
+            
+            Note: the namespace prefix is stripped.
+        """
+
         
-    def set_metadataNSDefault(ns):
+    def set_metadataNSDefault(ns): #@NoSelf
         """ Set the default metadata namespace.
         
             This is functionally equivalent to set_metadataNS('someuri', '').
             
         """
 
-    def get_metadataNSDefault():
+    def get_metadataNSDefault(): #@NoSelf
         """ Get the default metadata namespace.
         
         """
 
-    def set_metadataNS(ns, ns_prefix):
+    def set_metadataNS(ns, ns_prefix): #@NoSelf
         """ Set a metadata namespace.
         
         """
 
-    def remove_metadataNS(ns):
+    def remove_metadataNS(ns): #@NoSelf
         """ Remove a metadata namespace.
         
         """
     
-    def update_metadataNS(ns, ns_prefix):
+    def update_metadataNS(ns, ns_prefix): #@NoSelf
         """ Update a metadata namespace, and all related mappings.
         
         """
 
-    def set_metadataIndex(metadata_id, ns_prefix='', index_type=None):
+    def set_metadataIndex(metadata_id, ns_prefix='', index_type=None): #@NoSelf
         """ Define a new kind of metadata.
         
         """
-        
-    def get_metadataNSPrefixMap(ns_prefix):
-        """ Returns a dictionary of metadata for a particular NS.
-            
-            Note: the namespace prefix is stripped.
-        """
-        
-    def get_metadataFullNSPrefixMap():
+                
+    def get_metadataFullNSPrefixMap(): #@NoSelf
         """ Returns a dictionary of all the namespace prefixes along with their
         associated metadata.
         
         """
 
-    def get_metadataIndex(metadata_id, ns_prefix=''):
+    def get_metadataIndex(metadata_id, ns_prefix=''): #@NoSelf
         """ Returns the index type for a given metadata ID and namespace
         prefix.
         
         """
 
-    def get_metadataIndexMap():
+    def get_metadataIndexMap(): #@NoSelf
         """ Returns a dictionary of all metadata along with their index types.
         
         """
         
-    def remove_metadataIndex(metadata_id, ns_prefix=''):
+    def remove_metadataIndex(metadata_id, ns_prefix=''): #@NoSelf
         """ Undefine a kind of metadata.
         
         """

@@ -13,7 +13,7 @@ import logging
 log = logging.getLogger('XWFCore.cache')
 
 class ICache(Interface):
-    def set_max_objects(max):
+    def set_max_objects(max): #@NoSelf
         """ Set the maximum number of objects that the cache may contain.
         
         This may not be implemented by some classes, since not all caches
@@ -21,7 +21,7 @@ class ICache(Interface):
         
         """
 
-    def set_expiry_interval(self, dt):
+    def set_expiry_interval(dt): #@NoSelf
         """ Set the expiry interval of the cache, passing in a datetime.timedelta
         object.
 
@@ -30,27 +30,27 @@ class ICache(Interface):
         
         """
         
-    def add(key, object):
+    def add(key, object): #@NoSelf
         """ Add an object to the cache.
         
         """
         
-    def has_key(key):
+    def has_key(key): #@NoSelf
         """ Check to see if an object is in the cache.
         
         """
         
-    def get(key):
+    def get(key): #@NoSelf
         """ Get an object from the cache by key.
         
         """
 
-    def remove(key):
+    def remove(key): #@NoSelf
         """ Remove an object from the cache by key.
 
         """
         
-    def clear():
+    def clear(): #@NoSelf
         """Clear all instances from a cache
         """
 

@@ -70,7 +70,6 @@ def minimallyEqualXML(one, two):
     return sf(onedom.toxml()) == sf(twodom.toxml())
 
 from Products.XWFCore.XWFCatalog import XWFCatalog
-from Products.XWFCore.XWFMultiplePathIndex import MultiplePathIndex
 class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
     objectCount = 1000
     def afterSetUp(self):
@@ -129,7 +128,7 @@ class TestXWFMultiplePathIndex(ZopeTestCase.ZopeTestCase):
         self.assertEqual(self._catalog.getIndex('multiple_paths_method').numObjects(),
                          0)
 
-    def test_04_unindexLotsOfObjects(self):
+    def test_05_unindexLotsOfObjects(self):
         self.test_03_indexLotsOfObjects()
         total = 0
         for object in self._searchCatalog('multiple_paths_method', 'one/two'):

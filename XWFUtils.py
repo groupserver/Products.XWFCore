@@ -36,6 +36,7 @@ GroupMetadataCache = SimpleCache("GroupMetadataCache")
 import re, string
 
 import pytz
+
 import DateTime
 import datetime
 import time
@@ -50,7 +51,7 @@ try:
 except ImportError:
     from zope.app.datetimeutils import parseDatetimetz
 
-def locateDataDirectory(component):
+def locateDataDirectory(component, subpaths=()):
     """ Create and return the string representing the data directory for
     a given component, eg. groupserver.GSFeedParser
     
@@ -62,7 +63,7 @@ def locateDataDirectory(component):
               'Directory "%s" does not exist' % client_home 
     
     data_dir = os.path.join(client_home, 'groupserver.data',
-                            component)
+                            component, *subpaths)
     
     if not os.path.isdir(data_dir):
         os.makedirs(data_dir, 0700)
@@ -256,21 +257,21 @@ def generate_password(length=8):
     for i in xrange(length): #@UnusedVariable
         password += random.choice(readable_passchars)
         
-    return password
-    
-def convert_int2b(num, base, alphabet, converted=[]):
-    mod = num % 62; rem = num / 62
+    return password    
+
+def convert_int2b(num, alphabet, converted=[]):
+    mod = num % len(alphabet); rem = num / len(alphabet)
     converted.append(alphabet[mod])
     if rem:
-        return convert_int2b(rem, 62, alphabet, converted)
+        return convert_int2b(rem, alphabet, converted)
     converted.reverse()
-
-    return ''.join(converted)
+    retval = ''.join(converted)
+    return retval
 
 def convert_int2b62(num):
     alphabet = string.printable[:62]
-
-    return convert_int2b(num, 62, alphabet, [])
+    retval = convert_int2b(num, alphabet, [])
+    return retval
 
 def generate_accesscode(seed_string):
     """ Generate a random string for (among other things) validating users.
@@ -637,20 +638,6 @@ def get_support_email(context, siteId):
     assert retval
     assert '@' in retval
     return retval
-    
-def convert_int2b(num, alphabet, converted=[]):
-    mod = num % len(alphabet); rem = num / len(alphabet)
-    converted.append(alphabet[mod])
-    if rem:
-        return convert_int2b(rem, alphabet, converted)
-    converted.reverse()
-    retval = ''.join(converted)
-    return retval
-
-def convert_int2b62(num):
-    alphabet = string.printable[:62]
-    retval = convert_int2b(num, alphabet, [])
-    return retval
 
 def get_document_metadata(document):
     """ Get Document Metadata
@@ -794,12 +781,12 @@ def timedelta_to_string(td):
     for unit, limit in unitLimits:
         tdInUnit = s/limit
         if tdInUnit:
-          if (tdInUnit > 1):
-              # Plural
-              deltas.append(u'%d %ss' % (tdInUnit, unit))
-          else:
-              deltas.append(u'%d %s' % (tdInUnit, unit))
-          s = s - (tdInUnit * limit)
+            if (tdInUnit > 1):
+                # Plural
+                deltas.append(u'%d %ss' % (tdInUnit, unit))
+            else:
+                deltas.append(u'%d %s' % (tdInUnit, unit))
+            s = s - (tdInUnit * limit)
     retval = comma_comma_and(deltas)
     assert type(retval) == unicode
     return retval

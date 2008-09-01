@@ -54,28 +54,22 @@ class XWFCatalogAware(CatalogAware, Role.RoleManager):
         result = Role.RoleManager.manage_delLocalRoles(self, userids, REQUEST)
         self.reindexObjectSecurity()
         return result
-               
-    def manage_delLocalGroupRoles(self, userids, REQUEST=None):
-        """ Override of local role management to provide reindexing.
-        
-        """
-        result = Role.RoleManager.manage_delLocalGroupRoles(self, userids, REQUEST)
-        self.reindexObjectSecurity()
-        return result
         
     def manage_addLocalGroupRoles(self, userids, REQUEST=None):
         """ Override of local role management to provide reindexing.
-        
+            
+            Overrides patch from NuxUserGroups
         """
-        result = Role.RoleManager.manage_addLocalGroupRoles(self, userids, REQUEST)
+        result = Role.RoleManager.manage_addLocalGroupRoles(self, userids, REQUEST) #@UndefinedVariable
         self.reindexObjectSecurity()
         return result
 
     def manage_delLocalGroupRoles(self, userids, REQUEST=None):
         """ Override of local role management to provide reindexing.
         
+            Overrides patch from NuxUserGroups
         """
-        result = Role.RoleManager.manage_delLocalGroupRoles(self, userids, REQUEST)
+        result = Role.RoleManager.manage_delLocalGroupRoles(self, userids, REQUEST) #@UndefinedVariable
         self.reindexObjectSecurity()
         return result
 
