@@ -20,12 +20,12 @@
 from Interface import Interface
 
 class IXmlProducer(Interface):
-    def get_xml():
+    def get_xml(): #@NoSelf
         """ Returns a stream of XML representative of the object.
         
         """
         
-    def get_xmlMetadataElements(default_ns=''):
+    def get_xmlMetadataElements(default_ns=''): #@NoSelf
         """ Returns a stream of XML representative of the metadata of the
         object.
         
