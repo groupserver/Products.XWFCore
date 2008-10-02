@@ -560,23 +560,20 @@ def get_group_metadata_by_id(context, groupId):
     for site in vsites:
         groups = getattr(site, 'groups', None)
         if groups and getattr(groups, 'is_groups', False):
-            for object in groups.objectValues(('Folder',
-                                               'Folder (Ordered)')):
-                if getattr(object, 'is_group', False):
-                    group_id = object.getId()
-                    metadata = {'title': object.title_or_id(),
+            if groups.hasObject(groupId):
+                poss_group = getattr(groups.aq_explicit, groupId)
+                if poss_group.getProperty('is_group', False):
+                    metadata = {'title': poss_group.title_or_id(),
                                 'site': site.getId()}
-                    GroupMetadataCache.add(group_id, metadata)
-                    # make it a ghost
-                    object._p_deactivate()
-                    if group_id == groupId:
-                        bottom = time.time()
-                        log.info("Breaking early populating GroupMetadataCache, took %s ms" % ((bottom-top)*1000.0))
+                    GroupMetadataCache.add(groupId, metadata)
 
-                        return metadata
+                    bottom = time.time()
+                    log.info("Breaking early populating GroupMetadataCache, took %s ms" % ((bottom-top)*1000.0))
+
+                    return metadata
         
     bottom = time.time()
-    log.info("Populated GroupMetadataCache, but didn't find group, took %s secs" % (bottom-top))    
+    log.info("Looked through all sites, but didn't find group, took %s secs" % (bottom-top))    
     
     return None
 
