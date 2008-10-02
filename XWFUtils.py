@@ -808,3 +808,13 @@ def comma_comma_and(l):
     assert type(retval) in (unicode, str)
     return retval
 
+def deprecated(context, script):
+    """ Logging for deprecated scripts.
+
+    """
+    log.warn('Deprecated script "%s" called from "%s"' %
+              ('/'.join(script.getPhysicalPath()),
+               context.REQUEST.URL)
+             )
+
+
