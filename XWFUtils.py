@@ -798,7 +798,9 @@ def comma_comma_and(l):
       by " and ". If there is only one item in the list, it is returned.
     '''
     assert type(l) in [list, tuple], '%s, not a list or tuple' % type(l)
-    if len(l) == 1:
+    if len(l) == 0:
+        retval = u''
+    elif len(l) == 1:
         retval = l[0]
     else:
         retval = u' and '.join((u', '.join(l[:-1]), l[-1]))
