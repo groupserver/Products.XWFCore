@@ -174,7 +174,10 @@ def removePathsFromFilenames(fname):
     """ Remove the paths from filenames uploaded by (primarily) IE.
         
     """
-    return fname.split('\\')[-1].split('/')[-1]
+    retval = fname.split('\\')[-1].split('/')[-1]
+    retval = retval.replace('\r', ' ').replace('\n',' ')
+    assert type(retval) in (unicode, str)
+    return retval
     
 def createBatch(result_set, b_start, b_size):
     b_start = int(b_start)-1; b_size = int(b_size)
