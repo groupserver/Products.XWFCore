@@ -484,7 +484,8 @@ def date_format_by_age(dt):
     return format
 
 def munge_date(context, dt, format=None, user=None):
-    timezone = getOption(context, 'tz', default='UTC', user=user)
+    timezone = getOption(context, 'tz', user=user)
+    timezone = timezone and timezone or 'UTC'
     dt = change_timezone(dt, timezone)
 
     # if we don't have the format try and get the format from the options
