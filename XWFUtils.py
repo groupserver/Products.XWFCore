@@ -447,8 +447,10 @@ def change_timezone(dt, timezone):
         dt = parseDatetimetz(dt)
     
     assert isinstance(dt, datetime.datetime), \
-           ("dt is not a datetime instance, if a datetime instance was not "
-            "passed in as dt, it has not been converted correctly")
+           ("dt is not a datetime instance (is a %s), if a datetime "\
+            "instance was not "\
+            "passed in as dt, it has not been converted correctly" %\
+            dt)
 
     tz = pytz.timezone(timezone)
     return tz.normalize(dt.astimezone(tz))
@@ -483,10 +485,14 @@ def date_format_by_age(dt):
 
     return format
 
-def munge_date(context, dt, format=None, user=None):
+def dt_to_user_timezone(context, dt, user):
     timezone = getOption(context, 'tz', user=user)
     timezone = timezone and timezone or 'UTC'
-    dt = change_timezone(dt, timezone)
+    retval = change_timezone(dt, timezone)
+    return retval
+
+def munge_date(context, dt, format=None, user=None):
+    dt = dt_to_user_timezone(context, dt, user)
 
     # if we don't have the format try and get the format from the options
     if not format:
