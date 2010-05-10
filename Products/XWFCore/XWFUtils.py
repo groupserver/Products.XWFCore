@@ -175,7 +175,7 @@ def removePathsFromFilenames(fname):
         
     """
     retval = fname.split('\\')[-1].split('/')[-1]
-    retval = retval.replace('\r', ' ').replace('\n',' ')
+    retval = retval.replace('\r', ' ').replace('\n',' ').replace('\t',' ')
     assert type(retval) in (unicode, str)
     return retval
     
