@@ -4,7 +4,7 @@
 #
 
 from zope.interface.declarations import implements
-from zope.interface.interface import Interface
+from zope.interface import Interface
 import datetime
 
 from threading import Lock
