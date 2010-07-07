@@ -17,7 +17,7 @@
 # You MUST follow the rules in http://iopen.net/STYLE before checking in code
 # to the trunk. Code which does not follow the rules will be rejected.
 #
-from zope.interface.Interface import Interface
+from zope.interface.interface import Interface
 
 class IXmlProducer(Interface):
     def get_xml(): #@NoSelf
