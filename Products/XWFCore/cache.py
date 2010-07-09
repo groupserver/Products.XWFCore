@@ -7,7 +7,7 @@ from zope.interface.declarations import implements
 from zope.interface import Interface
 import datetime
 
-from threading import Lock
+from threading import RLock
 
 import logging
 log = logging.getLogger('XWFCore.cache')
@@ -59,7 +59,7 @@ class SimpleCache:
     
     """
     implements(ICache)
-    __thread_lock = Lock()
+    __thread_lock = RLock()
     def __init__(self, cache_name=''):
         self.cache = {}
         self.cache_name = cache_name
@@ -105,7 +105,7 @@ class SimpleCacheWithExpiry:
     
     """
     implements(ICache)
-    __thread_lock = Lock()
+    __thread_lock = RLock()
     def __init__(self, cache_name=''):
         self.cache = {}
         self.expiry_interval = None
@@ -162,7 +162,7 @@ class LRUCache:
     
     """
     implements(ICache)
-    __thread_lock = Lock()
+    __thread_lock = RLock()
     def __init__(self, cache_name=''):
         self.cache = {}
         self.cache_keys = []
