@@ -284,7 +284,7 @@ def generate_accesscode(seed_string):
     """ Generate a random string for (among other things) validating users.
     
     """    
-    num = long(md5.new(seed_string+str(DateTime.DateTime())).hexdigest(), 16)
+    num = long(md5(seed_string+str(DateTime.DateTime())).hexdigest(), 16)
     access_code = convert_int2b62(num)
     
     return access_code
@@ -677,7 +677,7 @@ def generate_verification_id(email):
     assert email, "No email address provided"
     
     # Let us hope that the verification ID *is* unique
-    vNum = long(md5.new(time.asctime() + email).hexdigest(), 16)
+    vNum = long(md5(time.asctime() + email).hexdigest(), 16)
     verificationId = str(convert_int2b62(vNum))
     return verificationId
 
