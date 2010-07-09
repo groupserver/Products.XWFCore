@@ -40,7 +40,11 @@ import pytz
 import DateTime
 import datetime
 import time
-import md5
+
+try:
+    from hashlib import md5
+except ImportError:
+    import md5
 
 import logging
 log = logging.getLogger('XWFCore.XWFUtils')
