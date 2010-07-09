@@ -44,7 +44,7 @@ import time
 try:
     from hashlib import md5
 except ImportError:
-    import md5
+    from md5 import md5
 
 import logging
 log = logging.getLogger('XWFCore.XWFUtils')
