@@ -804,12 +804,14 @@ def timedelta_to_string(td):
     assert type(retval) == unicode
     return retval
 
-def comma_comma_and(l):
-    '''Join a list of strings joined with commas and an "and".
+def comma_comma_and(l, conj='and'):
+    '''Join a list of strings joined with commas and a conjunction
+       (either "and" or "or", defaulting to "and").
     
       Turn a list (or tuple) of strings into a single string, with all
       the items joined by ", " except for the last two, which are joined
-      by " and ". If there is only one item in the list, it is returned.
+      by either " and " or " or ". If there is only one item in the list, 
+      it is returned.
     '''
     assert type(l) in [list, tuple], '%s, not a list or tuple' % type(l)
     if len(l) == 0:
@@ -817,7 +819,10 @@ def comma_comma_and(l):
     elif len(l) == 1:
         retval = l[0]
     else:
-        retval = u' and '.join((u', '.join(l[:-1]), l[-1]))
+        base = u' and '
+        if conj.strip() == 'or':
+            base = u' or '
+        retval = base.join((u', '.join(l[:-1]), l[-1]))
     assert type(retval) in (unicode, str)
     return retval
 
