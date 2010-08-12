@@ -862,7 +862,8 @@ except:
 else:
     zope_213 = True
 def get_the_actual_instance_from_zope(instance):
-    assert hasattr(instance, 'aq_self')
+    assert hasattr(instance, 'aq_self'),\
+        'The %s instance %s has no aq_self attribute' % (type(instance), instance)
     assert type(zope_213) == bool
 
     if zope_213:
