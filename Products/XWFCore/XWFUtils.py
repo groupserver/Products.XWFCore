@@ -836,4 +836,40 @@ def deprecated(context, script, message=''):
     log.warn(m % ('/'.join(script.getPhysicalPath()),
                   context.REQUEST.URL))
 
+# --=mpj17=-- My God, this is an awful place.
+#
+# TODO: Remove this function when we no longer lave to run on Zope 2.10.
+#
+# Sometimes Zope acquisition can be a hideous pain.
+# This is one of those times. For whatever reason, self.context 
+# gets all wrapped up in some voodoo to do with
+# "Products.Five.metaclass". In Zope 2.10 the "aq_self" is
+# required to exorcise the Dark Magiks and to allow the code to
+# operate without spewing errors about the site-instance being
+# None. However, in Zope 2.13 this causes a LocationError to be
+# thrown. It is the job of this class to do the right thing no 
+# matter what bullshit Zope acquisition decides to throw at us.
+#
+# What "get_the_actual_instance_from_zope" does is a bit of a mystery,
+# and I wrote the damn thing. Only use it if you have to, is a good 
+# rule of thumb.
+#
+# Basically, this is a CPP-like #ifdef
+try:
+    from five.formlib.formbase import PageForm
+except:
+    zope_213 = False
+else:
+    zope_213 = True
+def get_the_actual_instance_from_zope(instance):
+    assert hasattr(instance, 'aq_self')
+    assert type(zope_213) == bool
+
+    if zope_213:
+        retval = instance
+    else:
+        retval = instance.aq_self
+
+    assert retval
+    return retval
 
