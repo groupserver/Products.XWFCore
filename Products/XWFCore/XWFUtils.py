@@ -859,8 +859,10 @@ try:
     from five.formlib.formbase import PageForm
 except:
     zope_213 = False
+    print '##### Zope 2.10'
 else:
     zope_213 = True
+    print '##### Zope 2.13'
 def get_the_actual_instance_from_zope(instance):
     assert hasattr(instance, 'aq_self')
     assert type(zope_213) == bool
