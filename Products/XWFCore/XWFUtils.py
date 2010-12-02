@@ -751,6 +751,16 @@ def add_marker_interfaces(object, interfaces):
     
     return True
 
+def remove_marker_interfaces(object, interfaces):
+    ''' Remove given marker interfaces from a given object.
+    '''
+    from Products.Five.utilities.interfaces import IMarkerInterfaces
+    adapted_to_marker = IMarkerInterfaces(object)
+    remove = adapted_to_marker.dottedToInterfaces(interfaces)
+    adapted_to_marker.update(remove=remove)
+    
+    return True
+
 def sort_by_name(a, b):
     assert hasattr(a, 'name')
     assert hasattr(b, 'name')
