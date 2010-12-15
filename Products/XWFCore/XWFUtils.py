@@ -765,11 +765,11 @@ def sort_by_name(a, b):
     assert hasattr(a, 'name')
     assert hasattr(b, 'name')
     
-    if   (a.name < b.name):
+    if (a.name.lower() < b.name.lower()):
         retval = -1
-    elif (a.name == b.name):
+    elif (a.name.lower() == b.name.lower()):
         retval =  0
-    else:#a.name > b.name
+    else:#a.name.lower() > b.name.lower()
         retval =  1
         
     assert type(retval) == int
