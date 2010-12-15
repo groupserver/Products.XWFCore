@@ -884,3 +884,15 @@ def get_the_actual_instance_from_zope(instance):
     assert retval
     return retval
 
+def abscompath(component, relativepath):
+    """ From a component and a relative path, calculate the absolute path to a
+        file.
+
+        Usage: abscompath(gs.group.home, "browser/template/page.pt")
+
+    """
+    componentpath = os.path.dirname(component.__file__)
+
+    path = os.path.join(componentpath, relativepath)
+
+    return unicode(path)
