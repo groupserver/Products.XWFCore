@@ -896,3 +896,9 @@ def abscompath(component, relativepath):
     path = os.path.join(componentpath, relativepath)
 
     return unicode(path)
+
+# Wrap format_excec for older ZMI-side scripts.    
+from traceback import format_exc as actual_format_exec
+def format_exec():
+    return actual_format_exec()
+
