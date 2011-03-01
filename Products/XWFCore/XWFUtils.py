@@ -898,7 +898,7 @@ def abscompath(component, relativepath):
     return unicode(path)
 
 # Wrap format_excec for older ZMI-side scripts.    
+from traceback import format_exc as actual_format_exec
 def format_exec():
-    from traceback import format_exc as actual_format_exec
     return actual_format_exec()
 

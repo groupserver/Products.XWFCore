@@ -71,3 +71,6 @@ validator_security.declarePublic('ValidationError')
 
 from odict import ODict
 
+from AccessControl import allow_module
+allow_module('traceback')
+
