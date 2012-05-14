@@ -840,6 +840,8 @@ def deprecated(context, script, message=''):
     """ Logging for deprecated scripts.
 
     """
+    #TODO: Call zope.deprecation
+    # <http://pypi.python.org/pypi/zope.deprecation/3.5.0>
     m = 'Deprecated script "%s" called from "%s".'
     if message:
         m += ' %s.' % message
