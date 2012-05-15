@@ -12,6 +12,40 @@ from threading import RLock
 import logging
 log = logging.getLogger('XWFCore.cache')
 
+class Caches:
+    caches = {}
+    __thread_lock = RLock()
+    
+    def add(self, cache_instance):
+        try:
+            self.__thread_lock.acquire()
+            self.caches[cache_instance.cache_name] = cache_instance
+        finally:
+            self.__thread_lock.release()
+    
+    def remove(self, cache_instance):
+        try:
+            self.__thread_lock.acquire()
+            del self.caches[cache_instance.cache_name]
+        finally:
+            self.__thread_lock.release()
+
+    def has_key(self, cache_name):
+        try:
+            self.__thread_lock.acquire()
+            return self.caches.has_key(cache_name)
+        finally:
+            self.__thread_lock.release()
+
+    def get(self, cache_name):
+        try:
+            self.__thread_lock.acquire()
+            return self.caches[cache_name]
+        finally:
+            self.__thread_lock.release()
+
+caches = Caches()
+
 class ICache(Interface):
     def set_max_objects(max): #@NoSelf
         """ Set the maximum number of objects that the cache may contain.
@@ -53,6 +87,27 @@ class ICache(Interface):
     def clear(): #@NoSelf
         """Clear all instances from a cache
         """
+
+def simplecache(cachename, cachekeyfunc):
+    def cache_decorator(f):
+        def do_cache(*args):
+            if caches.has_key(cachename):
+                c = caches.get(cachename)
+            else:
+                c = SimpleCache(cachename)
+                caches.add(c)
+            cache_key = cachekeyfunc(*args)
+            result = c.get(cache_key)
+            if not result:
+                print 'cache miss'
+                result = f(*args)
+                c.add(cache_key, result)
+            print 'cache hit'
+            return result # do_cache
+
+        return do_cache # cache_decorator
+
+    return cache_decorator # simplecache
 
 class SimpleCache:
     """ Implement ICache with no expiry.
