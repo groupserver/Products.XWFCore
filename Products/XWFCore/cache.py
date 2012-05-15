@@ -99,10 +99,8 @@ def simplecache(cachename, cachekeyfunc):
             cache_key = cachekeyfunc(*args)
             result = c.get(cache_key)
             if not result:
-                print 'cache miss'
                 result = f(*args)
                 c.add(cache_key, result)
-            print 'cache hit'
             return result # do_cache
 
         return do_cache # cache_decorator
