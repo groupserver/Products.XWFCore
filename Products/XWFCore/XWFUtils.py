@@ -845,8 +845,8 @@ def deprecated(context, script, message=''):
     m = 'Deprecated script "%s" called from "%s".'
     if message:
         m += ' %s.' % message
-    log.warn(m % ('/'.join(script.getPhysicalPath()),
-                  context.REQUEST.URL))
+    url = getattr(context.REQUEST, 'URL', '##UNKNOWN##')
+    log.warn(m % ('/'.join(script.getPhysicalPath()), url))
 
 # --=mpj17=-- My God, this is an awful place.
 #
