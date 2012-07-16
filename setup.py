@@ -22,6 +22,7 @@ setup(name='Products.XWFCore',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'gs.cache',
           'zope.datetime',
           'Zope2',
           # -*- Extra requirements: -*-

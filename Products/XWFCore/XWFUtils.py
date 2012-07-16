@@ -29,9 +29,7 @@ from App.config import getConfiguration
 
 from AccessControl import getSecurityManager
 
-from cache import SimpleCache
-
-GroupMetadataCache = SimpleCache("GroupMetadataCache")
+from gs.cache import cache
 
 import re, string
 
@@ -560,13 +558,17 @@ def get_site_by_id(context, siteId):
     
     return retval
 
+def ck_simple(*args):
+    instance_id = 'foo'
+    ck = ':'.join((instance_id,)+args[1:])
+    print ck
+    return ck
+
+@cache('utils.get_group_metadata_by_id', ck_simple, 120) 
 def get_group_metadata_by_id(context, groupId):
     """ Get the metadata of a group by it's ID.
 
     """
-    if GroupMetadataCache.has_key(groupId):
-        return GroupMetadataCache.get(groupId)
-    
     vsites = get_virtual_site_objects(context)
 
     top = time.time()
@@ -579,7 +581,6 @@ def get_group_metadata_by_id(context, groupId):
                 if poss_group.getProperty('is_group', False):
                     metadata = {'title': poss_group.title_or_id(),
                                 'site': site.getId()}
-                    GroupMetadataCache.add(groupId, metadata)
 
                     bottom = time.time()
                     log.info("Breaking early populating GroupMetadataCache, took %s ms" % ((bottom-top)*1000.0))
