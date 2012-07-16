@@ -22,6 +22,8 @@ setup(name='Products.XWFCore',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'zope.datetime',
+          'Zope2',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
