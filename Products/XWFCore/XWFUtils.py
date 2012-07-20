@@ -281,8 +281,8 @@ def convert_int2b62(num):
 def generate_accesscode(seed_string):
     """ Generate a random string for (among other things) validating users.
     
-    """    
-    num = long(md5(seed_string+str(DateTime.DateTime())).hexdigest(), 16)
+    """
+    num = long(md5(seed_string+str(datetime.datetime.now().isoformat())).hexdigest(), 16)
     access_code = convert_int2b62(num)
     
     return access_code
