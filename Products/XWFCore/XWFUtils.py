@@ -848,9 +848,11 @@ def deprecated(context, script, message=''):
     """
     path = '/'.join(script.getPhysicalPath())
     url = getattr(context.REQUEST, 'URL', '##UNKNOWN##')
-    key = '%s:%s' % (path, url)
+    key = path
     if deprecationTracking.has_key(key):
         # shortcut. We only report a deprecation once per instance per start.
+        # pretty much this only makes it useful to know that it is still
+        # being used. Switch this off when fixing.
         return  
     else:
         # we don't lock, because we don't care *that* much if we print a message
