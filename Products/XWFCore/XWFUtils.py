@@ -617,7 +617,9 @@ def get_group_by_siteId_and_groupId(context, siteId, groupId):
     return retval
 
 def get_support_email(context, siteId):
-    assert siteId
+    if not siteId:
+        log.warning("get_support_email called from outside site context, unable to return a support email, so returning support@")
+        return "support@"
 
     site = get_site_by_id(context, siteId)
     assert site
