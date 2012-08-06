@@ -649,8 +649,8 @@ def get_support_email(context, siteId):
             elif canonical != 'onlinegroups.net':
                 retval = '%s@%s' % (supportGroupId, canonical)
 
-    assert retval
-    assert '@' in retval
+    if retval and '@' not in retval:
+        log.warning("support email is not set correctly: %s. This may be an error, or it may be normal if the page triggering this is outside the normal environment, such as a ZMI or other error." % retval)
     return retval
 
 def get_document_metadata(document):
