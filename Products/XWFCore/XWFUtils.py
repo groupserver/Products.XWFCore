@@ -31,6 +31,8 @@ from AccessControl import getSecurityManager
 
 from gs.cache import cache
 
+from threading import RLock
+
 import re, string
 
 import pytz
@@ -839,17 +841,26 @@ def comma_comma_and(l, conj='and'):
     assert type(retval) in (unicode, str)
     return retval
 
+deprecationTracking = {}
 def deprecated(context, script, message=''):
     """ Logging for deprecated scripts.
 
     """
-    #TODO: Call zope.deprecation
-    # <http://pypi.python.org/pypi/zope.deprecation/3.5.0>
+    path = '/'.join(script.getPhysicalPath())
+    url = getattr(context.REQUEST, 'URL', '##UNKNOWN##')
+    key = '%s:%s' % (path, url)
+    if deprecationTracking.has_key(key):
+        # shortcut. We only report a deprecation once per instance per start.
+        return  
+    else:
+        # we don't lock, because we don't care *that* much if we print a message
+        # more than once.
+        deprecationTracking[key] = True
+
     m = 'Deprecated script "%s" called from "%s".'
     if message:
         m += ' %s.' % message
-    url = getattr(context.REQUEST, 'URL', '##UNKNOWN##')
-    log.warn(m % ('/'.join(script.getPhysicalPath()), url))
+    log.warn(m % (path, url))
 
 # --=mpj17=-- My God, this is an awful place.
 #
