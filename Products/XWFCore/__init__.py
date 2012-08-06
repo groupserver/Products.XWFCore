@@ -53,6 +53,7 @@ xwfutils_security.declarePublic('comma_comma_and')
 xwfutils_security.declarePublic('timedelta_to_string')
 xwfutils_security.declarePublic('deprecated')
 xwfutils_security.declarePublic('format_exec')
+xwfutils_security.declarePublic('object_values')
 
 csv_security = ModuleSecurityInfo('Products.XWFCore.CSV')
 csv_security.declarePublic('CSVFile')

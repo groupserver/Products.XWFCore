@@ -907,3 +907,19 @@ from traceback import format_exc as actual_format_exec
 def format_exec():
     return actual_format_exec()
 
+def object_values(ocontainer, otypes=()):
+    """ This is effectively a wrapped version of OFS.objectValues, but
+        checking permission for each object.
+    """
+    objects = []
+    if not ocontainer:
+        return objects
+
+    for object_id in ocontainer.objectIds(otypes):
+        try:
+            object = getattr(ocontainer, object_id)
+            objects.append(object)
+        except:
+           pass
+
+    return objects
