@@ -31,6 +31,8 @@ from AccessControl import getSecurityManager
 
 from gs.cache import cache
 
+from threading import RLock
+
 import re, string
 
 import pytz
@@ -620,7 +622,9 @@ def get_group_by_siteId_and_groupId(context, siteId, groupId):
     return retval
 
 def get_support_email(context, siteId):
-    assert siteId
+    if not siteId:
+        log.warning("get_support_email called from outside site context, unable to return a support email, so returning support@")
+        return "support@"
 
     site = get_site_by_id(context, siteId)
     assert site
@@ -652,8 +656,8 @@ def get_support_email(context, siteId):
             elif canonical != 'onlinegroups.net':
                 retval = '%s@%s' % (supportGroupId, canonical)
 
-    assert retval
-    assert '@' in retval
+    if retval and '@' not in retval:
+        log.warning("support email is not set correctly: %s. This may be an error, or it may be normal if the page triggering this is outside the normal environment, such as a ZMI or other error." % retval)
     return retval
 
 def get_document_metadata(document):
@@ -840,17 +844,28 @@ def comma_comma_and(l, conj='and'):
     assert type(retval) in (unicode, str)
     return retval
 
+deprecationTracking = {}
 def deprecated(context, script, message=''):
     """ Logging for deprecated scripts.
 
     """
-    #TODO: Call zope.deprecation
-    # <http://pypi.python.org/pypi/zope.deprecation/3.5.0>
+    path = '/'.join(script.getPhysicalPath())
+    url = getattr(context.REQUEST, 'URL', '##UNKNOWN##')
+    key = path
+    if deprecationTracking.has_key(key):
+        # shortcut. We only report a deprecation once per instance per start.
+        # pretty much this only makes it useful to know that it is still
+        # being used. Switch this off when fixing.
+        return  
+    else:
+        # we don't lock, because we don't care *that* much if we print a message
+        # more than once.
+        deprecationTracking[key] = True
+
     m = 'Deprecated script "%s" called from "%s".'
     if message:
         m += ' %s.' % message
-    url = getattr(context.REQUEST, 'URL', '##UNKNOWN##')
-    log.warn(m % ('/'.join(script.getPhysicalPath()), url))
+    log.warn(m % (path, url))
 
 # --=mpj17=-- My God, this is an awful place.
 #
@@ -908,3 +923,19 @@ from traceback import format_exc as actual_format_exec
 def format_exec():
     return actual_format_exec()
 
+def object_values(ocontainer, otypes=()):
+    """ This is effectively a wrapped version of OFS.objectValues, but
+        checking permission for each object.
+    """
+    objects = []
+    if not ocontainer:
+        return objects
+
+    for object_id in ocontainer.objectIds(otypes):
+        try:
+            object = getattr(ocontainer, object_id)
+            objects.append(object)
+        except:
+           pass
+
+    return objects
