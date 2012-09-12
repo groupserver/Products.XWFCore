@@ -540,7 +540,10 @@ def get_virtual_site_objects(context, current_first=True):
     if current_first:
         current_site = get_current_virtual_site(context)
         if current_site:
-            objects.remove(current_site)
+            try:
+                objects.remove(current_site)
+            except ValueError, ve:
+                pass
             objects.insert(0, current_site)   
 
     return objects
