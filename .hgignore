@@ -2,6 +2,6 @@ syntax: glob
 *pyc
 *~
 *egg-info
-Presentation
 dist
-*.orig
+*orig
+*nja
