@@ -1,40 +1,33 @@
-# Copyright (C) 2003,2004 IOPEN Technologies Ltd.
+# -*- coding: utf-8 -*-
+##############################################################################
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
+# Copyright © 2003, 2004 IOPEN Technologies Ltd, 2013 OnlineGroups.net and
+# Contributors. All Rights Reserved.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
-# You MUST follow the rules in http://iopen.net/STYLE before checking in code
-# to the trunk. Code which does not follow the rules will be rejected.
-#
-import os
-import random
-import cgi
-import traceback
-__doc__ = """
+##############################################################################
+"""
 A collection of generally useful utility functions.
 
 """
+import os
+import random
+import cgi
+import traceback  # FIXME: check that we can remove the traceback import
+from threading import RLock  # FIXME: check that we can remove threading import
 from Acquisition import aq_get
 from App.config import getConfiguration
-
 from AccessControl import getSecurityManager
-
 from gs.cache import cache
 
-from threading import RLock
-
-import re, string
+import re
+import string
 
 import pytz
 
@@ -45,7 +38,7 @@ import time
 try:
     from hashlib import md5
 except ImportError:
-    from md5 import md5
+    from md5 import md5  # lint:ok
 
 import logging
 log = logging.getLogger('XWFCore.XWFUtils')
@@ -54,7 +47,8 @@ try:
     # prior to zope 3.3
     from zope.datetime import parseDatetimetz
 except ImportError:
-    from zope.app.datetimeutils import parseDatetimetz
+    from zope.app.datetimeutils import parseDatetimetz  # lint:ok
+
 
 def locateDataDirectory(component, subpaths=()):
     """ Create and return the string representing the data directory for
@@ -75,6 +69,7 @@ def locateDataDirectory(component, subpaths=()):
 
     return data_dir
 
+
 def convertCatalogResultsToXml(result_set):
     """ Convert a set of results (catalog Brain results) to XML using the
         get_xml method of those results.
@@ -91,6 +86,7 @@ def convertCatalogResultsToXml(result_set):
 
     return '\n\n'.join(xmlstream)
 
+
 def convertObjectsToXml(result_set):
     """ Convert a set of objects to XML using the get_xml method of those
         objects.
@@ -106,6 +102,7 @@ def convertObjectsToXml(result_set):
 
     return '\n\n'.join(xmlstream)
 
+
 def createRequestFromRequest(request, filternull=1, **kws):
     # work on a copy of the form so we don't screw up the request for other
     # things
@@ -113,10 +110,12 @@ def createRequestFromRequest(request, filternull=1, **kws):
     form.update(kws)
     nrequest = []
     for key,val in form.items():
-        if filternull and not val: continue
+        if filternull and not val:
+            continue
         nrequest.append('%s=%s' % (key, val))
 
     return '&'.join(nrequest)
+
 
 def convertTextToId(text):
     safe = string.digits + string.ascii_letters
@@ -129,6 +128,7 @@ def convertTextToId(text):
 
     return ''.join(s)
 
+
 def convertTextToAscii(text):
     s = []
     for i in text:
@@ -137,6 +137,7 @@ def convertTextToAscii(text):
             s.append(i)
 
     return ''.join(s)
+
 
 def try_encoding(s, possible_encoding, encoding):
     success = False
@@ -153,6 +154,7 @@ def try_encoding(s, possible_encoding, encoding):
         return s
 
     raise UnicodeDecodeError
+
 
 def convertTextUsingContentType(text, ct, encoding='UTF-8'):
     """ Given some text, and the content-type field of an email,
@@ -175,6 +177,7 @@ def convertTextUsingContentType(text, ct, encoding='UTF-8'):
 
     return text
 
+
 def removePathsFromFilenames(fname):
     """ Remove the paths from filenames uploaded by (primarily) IE.
 
@@ -183,6 +186,7 @@ def removePathsFromFilenames(fname):
     retval = retval.replace('\r', ' ').replace('\n',' ').replace('\t',' ')
     assert type(retval) in (unicode, str)
     return retval
+
 
 def createBatch(result_set, b_start, b_size):
     b_start = int(b_start)-1; b_size = int(b_size)
