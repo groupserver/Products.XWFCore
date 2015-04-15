@@ -64,7 +64,7 @@ class XWFIndexableObjectWrapper:
 class XWFCatalog(ZCatalog):
     """ A ZCatalog that adds additional filters to queries, primarily
     to remove objects the user doesn't have permission to view.
-    
+
     """
     security = ClassSecurityInfo()
 
@@ -74,19 +74,19 @@ class XWFCatalog(ZCatalog):
                             ZCatalog.manage_options)
 
     meta_type = 'XWF Catalog'
-    
+
     def __init__(self, id='Catalog'):
         self.__name__ = id
         self.id = id
 
         ZCatalog.__init__(self, self.getId())
-        
+
         self.addIndex('allowedRolesAndUsers', 'KeywordIndex')
 
     def __url(self, ob):
         return '/'.join(ob.getPhysicalPath())
 
-    def catalog_object(self, object, uid=None, idxs=[], update_metadata=1):         
+    def catalog_object(self, object, uid=None, idxs=[], update_metadata=1):
         vars = {}
         w = XWFIndexableObjectWrapper(vars, object)
         ZCatalog.catalog_object(self, w, uid, idxs, update_metadata)
@@ -109,23 +109,23 @@ class XWFCatalog(ZCatalog):
                 result.append('group:%s' % group)
         # end groups
         return result
-    
+
     # searchResults has inherited security assertions.
-    # searchResults and unrestrictedSearchResults are 'borrowed' 
+    # searchResults and unrestrictedSearchResults are 'borrowed'
     # from CMFCore
     def searchResults(self, REQUEST=None, **kw):
         """ Calls ZCatalog.searchResults with extra arguments that
             limit the results to what the user is allowed to see.
-            
+
         """
         user = getSecurityManager().getUser()
-        
+
         # we replace, rather than append the 'allowedRolesAndUsers' index,
         # anything else would be a really big security loophole
         kw[ 'allowedRolesAndUsers' ] = self._listAllowedRolesAndUsers( user )
-        
+
         return ZCatalog.searchResults(self, REQUEST, **kw)
-    
+
     __call__ = searchResults
 
     security.declarePrivate('unrestrictedSearchResults')
@@ -140,14 +140,14 @@ class XWFCatalog(ZCatalog):
 
         If you're in doubt if you should use this method or
         'searchResults' use the latter.
-        
+
         """
-        return ZCatalog.searchResults(self, REQUEST, **kw)    
+        return ZCatalog.searchResults(self, REQUEST, **kw)
 
     security.declarePrivate('indexObject')
     def indexObject(self, object):
         """ Add to catalog.
-        
+
         """
         url = self.__url(object)
         self.catalog_object(object, url)
@@ -155,7 +155,7 @@ class XWFCatalog(ZCatalog):
     security.declarePrivate('unindexObject')
     def unindexObject(self, object):
         """ Remove from catalog.
-        
+
         """
         url = self.__url(object)
         self.uncatalog_object(url)
@@ -165,7 +165,7 @@ class XWFCatalog(ZCatalog):
         """ Update catalog after object data has changed.
         The optional idxs argument is a list of specific indexes
         to update (all of them by default).
-        
+
         """
         url = self.__url(object)
         if idxs != []:
@@ -179,37 +179,37 @@ class XWFCatalog(ZCatalog):
         # don't do anything!
         if item.meta_type != self.meta_type:
             return False
-        
+
         if not hasattr(item.aq_explicit, 'Lexicon'):
             wordsplitter = Record()
             wordsplitter.group = 'Word Splitter'
             wordsplitter.name = 'HTML aware splitter'
-            
+
             casenormalizer = Record()
             casenormalizer.group = 'Case Normalizer'
             casenormalizer.name = 'Case Normalizer'
-            
+
             stopwords = Record()
             stopwords.group = 'Stop Words'
             stopwords.name = 'Remove listed and single char words'
-            
+
             item.manage_addProduct['ZCTextIndex'].manage_addLexicon(
                                                  'Lexicon', 'Default Lexicon',
                                   (wordsplitter, casenormalizer, stopwords))
-        
+
         indexes = item.indexes()
         schema = item.schema()
-        
+
         if 'indexable_content' not in indexes:
             zctextindex_extras = Record()
             zctextindex_extras.index_type = 'Okapi BM25 Rank'
             zctextindex_extras.lexicon_id = 'Lexicon'
-            # add the full text index 
+            # add the full text index
             zctextindex_extras.doc_attr = 'indexable_content'
-        
+
             item.addIndex('indexable_content',
                              'ZCTextIndex', zctextindex_extras)
-        
+
         for index_id, index_type in (('id', 'FieldIndex'),
                                      ('meta_type', 'FieldIndex'),
                                      ('modification_time', 'DateIndex'),
@@ -221,16 +221,16 @@ class XWFCatalog(ZCatalog):
                                      ('content_type', 'FieldIndex')):
             if index_id not in indexes:
                 item.addIndex(index_id, index_type)
-            
+
         # store the common metadata for sorting
         for md in ('id', 'content_type', 'meta_type', 'title', 'topic', 'tags',
                    'size', 'modification_time', 'group_ids', 'dc_creator',
                    'indexable_summary'):
             if md not in schema:
                 item.addColumn(md)
-                
+
         return True
-        
+
 # Zope Management Methods
 #
 manage_addXWFCatalogForm = PageTemplateFile(
@@ -239,11 +239,11 @@ manage_addXWFCatalogForm = PageTemplateFile(
 
 def manage_addXWFCatalog(self, id, REQUEST=None, RESPONSE=None, submit=None):
     """ Add a new instance of XWFCatalog.
-        
+
     """
     obj = XWFCatalog(id)
     self._setObject(id, obj)
-    
+
     if RESPONSE and submit:
         if submit.strip().lower() == 'add':
             RESPONSE.redirect('%s/manage_main' % self.DestinationURL())
@@ -258,4 +258,4 @@ def initialize(context):
                       manage_addXWFCatalog),
         icon='icons/ic-xwfcatalog.png'
         )
-        
+
