@@ -4,12 +4,13 @@
 # Submitter: David Benjamin (other recipes)
 # Last Updated: 2002/01/21
 # Version no: 1.2
-# Category: Extending 
+# Category: Extending
 
 from UserDict import UserDict
 
+
 class ODict(UserDict):
-    def __init__(self, dict = None):
+    def __init__(self, dict=None):
         self._keys = []
         UserDict.__init__(self, dict)
 
@@ -19,14 +20,15 @@ class ODict(UserDict):
 
     def __setitem__(self, key, item):
         UserDict.__setitem__(self, key, item)
-        if key not in self._keys: self._keys.append(key)
+        if key not in self._keys:
+            self._keys.append(key)
 
     def clear(self):
         UserDict.clear(self)
         self._keys = []
 
     def copy(self):
-        dict = UserDict.copy(self)
+        dict = UserDict.copy(self)  # lint:ok
         dict._keys = self._keys[:]
         return dict
 
@@ -47,15 +49,16 @@ class ODict(UserDict):
 
         return (key, val)
 
-    def setdefault(self, key, failobj = None):
+    def setdefault(self, key, failobj=None):
         UserDict.setdefault(self, key, failobj)
-        if key not in self._keys: self._keys.append(key)
+        if key not in self._keys:
+            self._keys.append(key)
 
     def update(self, dict):
         UserDict.update(self, dict)
         for key in dict.keys():
-            if key not in self._keys: self._keys.append(key)
+            if key not in self._keys:
+                self._keys.append(key)
 
     def values(self):
         return map(self.get, self._keys)
-

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-##############################################################################
+############################################################################
 #
-# Copyright © 2003, 2004 IOPEN Technologies Ltd, 2013 OnlineGroups.net and
-# Contributors. All Rights Reserved.
+# Copyright © 2003, 2004 IOPEN Technologies Ltd
+# Copyright 2013, 2015 OnlineGroups.net and Contributors.
+#
+# All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
@@ -11,7 +13,7 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 #
-##############################################################################
+############################################################################
 """
 A collection of generally useful utility functions.
 
@@ -19,8 +21,6 @@ A collection of generally useful utility functions.
 import os
 import random
 import cgi
-import traceback  # FIXME: check that we can remove the traceback import
-from threading import RLock  # FIXME: check that we can remove threading import
 from Acquisition import aq_get
 from App.config import getConfiguration
 from AccessControl import getSecurityManager
@@ -550,7 +550,7 @@ def get_virtual_site_objects(context, current_first=True):
         if current_site:
             try:
                 objects.remove(current_site)
-            except ValueError, ve:
+            except ValueError:
                 pass
             objects.insert(0, current_site)
 
@@ -895,11 +895,13 @@ def deprecated(context, script, message=''):
 #
 # Basically, this is a CPP-like #ifdef
 try:
-    from five.formlib.formbase import PageForm
+    from five.formlib.formbase import PageForm  # lint:ok
 except:
     zope_213 = False
 else:
     zope_213 = True
+
+
 def get_the_actual_instance_from_zope(instance):
     assert hasattr(instance, 'aq_self'),\
         'The %s instance %s has no aq_self attribute' % (type(instance), instance)
@@ -912,6 +914,7 @@ def get_the_actual_instance_from_zope(instance):
 
     assert retval
     return retval
+
 
 def abscompath(component, relativepath):
     """ From a component and a relative path, calculate the absolute path to a
@@ -926,10 +929,14 @@ def abscompath(component, relativepath):
 
     return unicode(path)
 
+
 # Wrap format_excec for older ZMI-side scripts.
 from traceback import format_exc as actual_format_exec
+
+
 def format_exec():
     return actual_format_exec()
+
 
 def object_values(ocontainer, otypes=()):
     """ This is effectively a wrapped version of OFS.objectValues, but
@@ -941,9 +948,9 @@ def object_values(ocontainer, otypes=()):
 
     for object_id in ocontainer.objectIds(otypes):
         try:
-            object = getattr(ocontainer, object_id)
-            objects.append(object)
+            obj = getattr(ocontainer, object_id)
+            objects.append(obj)
         except:
-           pass
+            pass
 
     return objects
