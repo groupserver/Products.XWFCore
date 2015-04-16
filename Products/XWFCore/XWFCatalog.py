@@ -86,7 +86,10 @@ class XWFCatalog(ZCatalog):
     def __url(self, ob):
         return '/'.join(ob.getPhysicalPath())
 
-    def catalog_object(self, object, uid=None, idxs=[], update_metadata=1):
+    def catalog_object(self, object, uid=None, idxs=None,
+                       update_metadata=1):
+        if idxs is None:
+            idxs = []
         vars = {}
         w = XWFIndexableObjectWrapper(vars, object)
         ZCatalog.catalog_object(self, w, uid, idxs, update_metadata)
@@ -161,12 +164,14 @@ class XWFCatalog(ZCatalog):
         self.uncatalog_object(url)
 
     security.declarePrivate('reindexObject')
-    def reindexObject(self, object, idxs=[], update_metadata=1):
+    def reindexObject(self, object, idxs=None, update_metadata=1):
         """ Update catalog after object data has changed.
         The optional idxs argument is a list of specific indexes
         to update (all of them by default).
 
         """
+        if idxs is None:
+            idxs = []
         url = self.__url(object)
         if idxs != []:
             # Filter out invalid indexes.

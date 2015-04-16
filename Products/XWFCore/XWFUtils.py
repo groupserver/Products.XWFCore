@@ -271,7 +271,9 @@ def generate_password(length=8):
 
     return password
 
-def convert_int2b(num, alphabet, converted=[]):
+def convert_int2b(num, alphabet, converted=None):
+    if converted is None:
+        converted = []
     mod = num % len(alphabet); rem = num / len(alphabet)
     converted.append(alphabet[mod])
     if rem:
