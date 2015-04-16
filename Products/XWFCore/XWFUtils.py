@@ -25,7 +25,8 @@ from Acquisition import aq_get
 from App.config import getConfiguration
 from AccessControl import getSecurityManager
 from gs.cache import cache
-
+from gs.core import comma_comma_and, curr_time  # lint:ok
+from gs.core.identifiers import convert_int2b, convert_int2b62  # lint:ok
 import re
 import string
 
@@ -271,22 +272,6 @@ def generate_password(length=8):
 
     return password
 
-def convert_int2b(num, alphabet, converted=None):
-    if converted is None:
-        converted = []
-    mod = num % len(alphabet); rem = num / len(alphabet)
-    converted.append(alphabet[mod])
-    if rem:
-        return convert_int2b(rem, alphabet, converted)
-    converted.reverse()
-    retval = ''.join(converted)
-    return retval
-
-def convert_int2b62(num):
-    alphabet = string.printable[:62]
-    retval = convert_int2b(num, alphabet, [])
-    return retval
-
 def generate_accesscode(seed_string):
     """ Generate a random string for (among other things) validating users.
 
@@ -519,8 +504,6 @@ def munge_date(context, dt, format=None, user=None):
 def all_timezones():
     return pytz.all_timezones
 
-def curr_time():
-    return datetime.datetime.now(pytz.utc)
 
 def get_current_virtual_site(context):
     while context:
@@ -830,27 +813,6 @@ def timedelta_to_string(td):
     assert type(retval) == unicode
     return retval
 
-def comma_comma_and(l, conj='and'):
-    '''Join a list of strings joined with commas and a conjunction
-       (either "and" or "or", defaulting to "and").
-
-      Turn a list (or tuple) of strings into a single string, with all
-      the items joined by ", " except for the last two, which are joined
-      by either " and " or " or ". If there is only one item in the list,
-      it is returned.
-    '''
-    assert type(l) in [list, tuple], '%s, not a list or tuple' % type(l)
-    if len(l) == 0:
-        retval = u''
-    elif len(l) == 1:
-        retval = l[0]
-    else:
-        base = u' and '
-        if conj.strip() == 'or':
-            base = u' or '
-        retval = base.join((u', '.join(l[:-1]), l[-1]))
-    assert type(retval) in (unicode, str)
-    return retval
 
 deprecationTracking = {}
 def deprecated(context, script, message=''):
